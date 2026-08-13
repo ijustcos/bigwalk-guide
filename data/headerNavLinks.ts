@@ -1,9 +1,9 @@
 const headerNavLinks = [
   { href: '/', title: 'Home' },
-  { href: '/blog', title: 'Blog' },
-  { href: '/tags', title: 'Tags' },
-  { href: '/projects', title: 'Projects' },
-  { href: '/about', title: 'About' },
+  { href: '/puzzles', title: 'Puzzles' },
+  { href: '/guides/purple-gourds', title: 'Guides' },
+  { href: '/multiplayer/solo-and-matchmaking', title: 'Multiplayer' },
+  { href: '/find-players', title: 'Find Players' },
 ]
 
 export default headerNavLinks

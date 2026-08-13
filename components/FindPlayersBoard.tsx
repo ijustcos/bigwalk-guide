@@ -1,0 +1,417 @@
+'use client'
+
+import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import { Check, Clock3, Copy, Filter, Flag, Mic, Plus, RefreshCw, Users, X } from 'lucide-react'
+import type { PublicLfgPost } from '@/lib/lfg'
+import TurnstileWidget from './TurnstileWidget'
+
+const samplePosts: PublicLfgPost[] = [
+  {
+    id: 'sample-1',
+    displayName: 'Maple',
+    platform: 'PC',
+    region: 'Europe',
+    language: 'English',
+    groupType: 'Hosting',
+    availability: 'Playing now',
+    playersNeeded: 2,
+    microphone: 'Optional',
+    experience: 'New',
+    goal: 'Early puzzles and Red Tower',
+    message: 'First session, happy to explore slowly.',
+    joinCode: 'PREVIEW',
+    status: 'Active',
+    createdAt: new Date(Date.now() - 8 * 60000).toISOString(),
+    expiresAt: new Date(Date.now() + 5 * 3600000).toISOString(),
+  },
+  {
+    id: 'sample-2',
+    displayName: 'Nori',
+    platform: 'PS5',
+    region: 'Asia',
+    language: 'English',
+    groupType: 'Looking to join',
+    availability: 'Today',
+    playersNeeded: 1,
+    microphone: 'Required',
+    experience: 'Some progress',
+    goal: 'Purple puzzles',
+    message: 'Looking for a relaxed completion run.',
+    joinCode: '',
+    status: 'Active',
+    createdAt: new Date(Date.now() - 26 * 60000).toISOString(),
+    expiresAt: new Date(Date.now() + 3 * 3600000).toISOString(),
+  },
+]
+
+const fieldClass =
+  'mt-1 w-full rounded-xl border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-[#1f6b5b] focus:ring-[#1f6b5b] dark:border-slate-700 dark:bg-slate-900'
+
+function relativeTime(value: string) {
+  const minutes = Math.max(1, Math.floor((Date.now() - new Date(value).getTime()) / 60000))
+  return minutes < 60 ? `${minutes}m ago` : `${Math.floor(minutes / 60)}h ago`
+}
+
+export default function FindPlayersBoard() {
+  const [posts, setPosts] = useState<PublicLfgPost[]>([])
+  const [configured, setConfigured] = useState(true)
+  const [loading, setLoading] = useState(true)
+  const [formOpen, setFormOpen] = useState(false)
+  const [platform, setPlatform] = useState('Any')
+  const [region, setRegion] = useState('Any')
+  const [mic, setMic] = useState('Any')
+  const [message, setMessage] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [turnstileToken, setTurnstileToken] = useState('')
+  const [revealed, setRevealed] = useState<string[]>([])
+
+  const load = useCallback(async () => {
+    setLoading(true)
+    try {
+      const response = await fetch('/api/lfg', { cache: 'no-store' })
+      const data = await response.json()
+      setConfigured(data.configured !== false)
+      setPosts(data.configured === false ? samplePosts : data.posts || [])
+    } catch {
+      setConfigured(false)
+      setPosts(samplePosts)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+  useEffect(() => {
+    load()
+  }, [load])
+
+  const filtered = useMemo(
+    () =>
+      posts.filter(
+        (post) =>
+          (platform === 'Any' || post.platform === platform) &&
+          (region === 'Any' || post.region === region) &&
+          (mic === 'Any' || post.microphone === mic)
+      ),
+    [posts, platform, region, mic]
+  )
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setSubmitting(true)
+    setMessage('')
+    const form = new FormData(event.currentTarget)
+    const payload = Object.fromEntries(form.entries()) as Record<string, unknown>
+    payload.turnstileToken = turnstileToken
+    try {
+      const response = await fetch('/api/lfg', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.error || 'Unable to publish.')
+      const manageUrl = `/find-players/manage/${data.post.id}/${data.manageToken}`
+      localStorage.setItem(`bw-manage-${data.post.id}`, data.manageToken)
+      setMessage(`Published. Save this management link: ${location.origin}${manageUrl}`)
+      await load()
+      event.currentTarget.reset()
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Unable to publish.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  async function report(id: string) {
+    if (id.startsWith('sample-') || !confirm('Report this listing as invalid or expired?')) return
+    await fetch(`/api/lfg/${id}`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ reason: 'Invalid or expired code' }),
+    })
+    setMessage('Report received. Thank you.')
+  }
+
+  return (
+    <div>
+      {!configured && (
+        <div className="mb-6 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          Preview mode: these are example listings. Live posting opens as soon as the production
+          database is connected.
+        </div>
+      )}
+      <div className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:flex-row md:items-end dark:border-slate-800 dark:bg-slate-900">
+        {[
+          ['Platform', platform, setPlatform, ['Any', 'PC', 'PS5', 'Xbox', 'Switch']],
+          ['Region', region, setRegion, ['Any', 'Americas', 'Europe', 'Asia', 'Oceania']],
+          ['Microphone', mic, setMic, ['Any', 'Required', 'Optional', 'No mic']],
+        ].map(([label, value, setter, options]) => (
+          <label
+            key={label as string}
+            className="min-w-0 flex-1 text-xs font-bold tracking-wider text-slate-500 uppercase"
+          >
+            {label as string}
+            <select
+              value={value as string}
+              onChange={(e) => (setter as (v: string) => void)(e.target.value)}
+              className={fieldClass}
+            >
+              {(options as string[]).map((item) => (
+                <option key={item}>{item}</option>
+              ))}
+            </select>
+          </label>
+        ))}
+        <button
+          onClick={() => setFormOpen(true)}
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#f5c24d] px-5 py-3 font-bold text-[#153f38] hover:bg-[#ffd66c]"
+        >
+          <Plus size={18} /> Post a group
+        </button>
+      </div>
+
+      <div className="mt-6 flex items-center justify-between">
+        <div className="flex items-center gap-2 text-sm font-semibold text-slate-500">
+          <Filter size={16} /> {filtered.length} active groups
+        </div>
+        <button
+          onClick={load}
+          className="rounded-lg p-2 text-slate-500 hover:bg-white"
+          aria-label="Refresh"
+        >
+          <RefreshCw size={17} className={loading ? 'animate-spin' : ''} />
+        </button>
+      </div>
+
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+        {filtered.map((post) => {
+          const isRevealed = revealed.includes(post.id)
+          return (
+            <article
+              key={post.id}
+              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-bold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
+                      {post.availability}
+                    </span>
+                    <span className="text-xs text-slate-400">{relativeTime(post.createdAt)}</span>
+                  </div>
+                  <h2 className="mt-3 text-lg font-black">
+                    {post.displayName} · {post.platform} · {post.region}
+                  </h2>
+                </div>
+                <button
+                  onClick={() => report(post.id)}
+                  className="p-2 text-slate-400 hover:text-red-600"
+                  aria-label="Report listing"
+                >
+                  <Flag size={16} />
+                </button>
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold text-slate-600 dark:text-slate-300">
+                <span className="rounded-lg bg-slate-100 px-2.5 py-1.5 dark:bg-slate-800">
+                  {post.language}
+                </span>
+                <span className="rounded-lg bg-slate-100 px-2.5 py-1.5 dark:bg-slate-800">
+                  <Mic size={12} className="mr-1 inline" />
+                  {post.microphone}
+                </span>
+                <span className="rounded-lg bg-slate-100 px-2.5 py-1.5 dark:bg-slate-800">
+                  <Users size={12} className="mr-1 inline" />
+                  Needs {post.playersNeeded}
+                </span>
+                <span className="rounded-lg bg-slate-100 px-2.5 py-1.5 dark:bg-slate-800">
+                  {post.experience}
+                </span>
+              </div>
+              <p className="mt-4 font-bold text-[#1f6b5b]">{post.goal}</p>
+              {post.message && (
+                <p className="mt-1 text-sm leading-6 text-slate-500 dark:text-slate-400">
+                  {post.message}
+                </p>
+              )}
+              <div className="mt-5 flex items-center justify-between gap-3 border-t border-slate-100 pt-4 dark:border-slate-800">
+                <span className="inline-flex items-center gap-1.5 text-xs text-slate-400">
+                  <Clock3 size={14} /> Expires{' '}
+                  {new Date(post.expiresAt).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </span>
+                {post.joinCode && (
+                  <button
+                    onClick={async () => {
+                      if (isRevealed) await navigator.clipboard.writeText(post.joinCode)
+                      else setRevealed([...revealed, post.id])
+                    }}
+                    className="inline-flex items-center gap-2 rounded-lg bg-[#153f38] px-3 py-2 text-xs font-bold text-white"
+                  >
+                    {isRevealed ? (
+                      <>
+                        <Copy size={14} />
+                        {post.joinCode}
+                      </>
+                    ) : (
+                      'Reveal Join Code'
+                    )}
+                  </button>
+                )}
+              </div>
+            </article>
+          )
+        })}
+      </div>
+      {!loading && filtered.length === 0 && (
+        <div className="mt-6 rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
+          No matching groups right now. Post one or try a broader filter.
+        </div>
+      )}
+
+      {formOpen && (
+        <div className="fixed inset-0 z-[100] overflow-y-auto bg-slate-950/60 p-4 backdrop-blur-sm">
+          <div className="mx-auto my-6 max-w-2xl rounded-3xl bg-[#f7f4ea] p-6 shadow-2xl sm:p-8 dark:bg-slate-950">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-black">Post a group</h2>
+                <p className="mt-1 text-sm text-slate-500">
+                  No account required. Posts expire automatically.
+                </p>
+              </div>
+              <button
+                onClick={() => setFormOpen(false)}
+                className="rounded-full p-2 hover:bg-white dark:hover:bg-slate-800"
+              >
+                <X />
+              </button>
+            </div>
+            <form onSubmit={submit} className="mt-7 grid gap-5 sm:grid-cols-2">
+              <label className="text-sm font-bold">
+                Display name
+                <input
+                  name="displayName"
+                  required
+                  minLength={2}
+                  maxLength={24}
+                  className={fieldClass}
+                />
+              </label>
+              <label className="text-sm font-bold">
+                Platform
+                <select name="platform" className={fieldClass}>
+                  {['PC', 'PS5', 'Xbox', 'Switch'].map((v) => (
+                    <option key={v}>{v}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="text-sm font-bold">
+                Region
+                <select name="region" className={fieldClass}>
+                  {['Americas', 'Europe', 'Asia', 'Oceania'].map((v) => (
+                    <option key={v}>{v}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="text-sm font-bold">
+                Language
+                <input name="language" required defaultValue="English" className={fieldClass} />
+              </label>
+              <label className="text-sm font-bold">
+                Group type
+                <select name="groupType" className={fieldClass}>
+                  {['Hosting', 'Looking to join', 'Either'].map((v) => (
+                    <option key={v}>{v}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="text-sm font-bold">
+                Availability
+                <select name="availability" className={fieldClass}>
+                  {['Playing now', 'Today', 'Later'].map((v) => (
+                    <option key={v}>{v}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="text-sm font-bold">
+                Players needed
+                <select name="playersNeeded" className={fieldClass}>
+                  {[1, 2, 3].map((v) => (
+                    <option key={v}>{v}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="text-sm font-bold">
+                Microphone
+                <select name="microphone" className={fieldClass}>
+                  {['Required', 'Optional', 'No mic'].map((v) => (
+                    <option key={v}>{v}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="text-sm font-bold">
+                Experience
+                <select name="experience" className={fieldClass}>
+                  {['New', 'Some progress', 'Experienced'].map((v) => (
+                    <option key={v}>{v}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="text-sm font-bold">
+                Post lifetime
+                <select name="lifetime" defaultValue="6" className={fieldClass}>
+                  <option value="2">2 hours</option>
+                  <option value="6">6 hours</option>
+                  <option value="24">24 hours</option>
+                </select>
+              </label>
+              <label className="text-sm font-bold sm:col-span-2">
+                Goal
+                <input
+                  name="goal"
+                  required
+                  maxLength={80}
+                  placeholder="Explore, Red Tower, purple puzzles…"
+                  className={fieldClass}
+                />
+              </label>
+              <label className="text-sm font-bold">
+                Join Code <span className="font-normal text-slate-400">(required for hosts)</span>
+                <input name="joinCode" maxLength={24} className={fieldClass} />
+              </label>
+              <label className="text-sm font-bold">
+                Short message
+                <input name="message" maxLength={160} className={fieldClass} />
+              </label>
+              <div className="sm:col-span-2">
+                <TurnstileWidget onToken={setTurnstileToken} />
+              </div>
+              {message && (
+                <div
+                  className={`rounded-xl p-3 text-sm sm:col-span-2 ${message.startsWith('Published') ? 'bg-emerald-100 text-emerald-900' : 'bg-amber-100 text-amber-900'}`}
+                >
+                  {message}
+                </div>
+              )}
+              <label className="flex gap-2 text-xs leading-5 text-slate-500 sm:col-span-2">
+                <input type="checkbox" required className="mt-1 rounded" />I will not share personal
+                information, links or abusive content.
+              </label>
+              <button
+                disabled={submitting || !configured}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#153f38] px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50 sm:col-span-2"
+              >
+                {submitting ? (
+                  <RefreshCw className="animate-spin" size={18} />
+                ) : (
+                  <Check size={18} />
+                )}{' '}
+                Publish group
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}

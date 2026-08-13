@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@plugin "@tailwindcss/forms";
+@plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 @source '../node_modules/pliny';
 @custom-variant dark (&:where(.dark, .dark *));
@@ -7,18 +7,19 @@
 /* Core theme configuration */
 @theme {
   /* Font families */
-  --font-sans: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+  --font-sans:
+    var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
     'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
   /* Colors */
   /* Copied from https://tailwindcss.com/docs/theme#default-theme-variable-reference */
-  --color-primary-50: oklch(0.971 0.014 343.198);
+  --color-primary-50: oklch(0.97 0.02 166);
   --color-primary-100: oklch(0.948 0.028 342.258);
   --color-primary-200: oklch(0.899 0.061 343.231);
   --color-primary-300: oklch(0.823 0.12 346.018);
   --color-primary-400: oklch(0.718 0.202 349.761);
-  --color-primary-500: oklch(0.656 0.241 354.308);
-  --color-primary-600: oklch(0.592 0.249 0.584);
+  --color-primary-500: #1f6b5b;
+  --color-primary-600: #153f38;
   --color-primary-700: oklch(0.525 0.223 3.958);
   --color-primary-800: oklch(0.459 0.187 3.815);
   --color-primary-900: oklch(0.408 0.153 2.432);
@@ -46,6 +47,17 @@
   --z-60: 60;
   --z-70: 70;
   --z-80: 80;
+}
+
+::selection {
+  background: #f5c24d;
+  color: #153f38;
+}
+
+body {
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(245, 194, 77, 0.1), transparent 28rem),
+    radial-gradient(circle at 90% 20%, rgba(31, 107, 91, 0.08), transparent 26rem);
 }
 
 /*

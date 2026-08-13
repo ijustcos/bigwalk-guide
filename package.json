@@ -1,5 +1,5 @@
 {
-  "name": "tailwind-nextjs-starter-blog",
+  "name": "bigwalk-field-guide",
   "version": "2.4.0",
   "private": true,
   "scripts": {
@@ -14,6 +14,8 @@
   "dependencies": {
     "@headlessui/react": "2.2.9",
     "@next/bundle-analyzer": "15.5.12",
+    "@supabase/ssr": "^0.12.4",
+    "@supabase/supabase-js": "^2.112.3",
     "@tailwindcss/forms": "^0.5.11",
     "@tailwindcss/postcss": "^4.1.18",
     "@tailwindcss/typography": "^0.5.19",
@@ -24,6 +26,7 @@
     "gray-matter": "^4.0.3",
     "hast-util-from-html-isomorphic": "^2.0.0",
     "image-size": "2.0.2",
+    "lucide-react": "^1.31.0",
     "next": "15.5.12",
     "next-contentlayer2": "0.5.8",
     "next-themes": "^0.4.6",
@@ -44,7 +47,8 @@
     "remark-github-blockquote-alert": "^2.0.1",
     "remark-math": "^6.0.0",
     "tailwindcss": "^4.1.18",
-    "unist-util-visit": "^5.1.0"
+    "unist-util-visit": "^5.1.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",
