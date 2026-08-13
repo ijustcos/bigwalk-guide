@@ -1,6 +1,6 @@
 create extension if not exists pgcrypto;
 
-create table if not exists public.lfg_posts (
+create table if not exists lfg_posts (
   id uuid primary key default gen_random_uuid(),
   display_name text not null check (char_length(display_name) between 2 and 24),
   platform text not null,
@@ -23,17 +23,17 @@ create table if not exists public.lfg_posts (
   updated_at timestamptz not null default now()
 );
 
-create index if not exists lfg_posts_active_idx on public.lfg_posts (status, expires_at desc);
-create index if not exists lfg_posts_source_idx on public.lfg_posts (source_hash, status);
+create index if not exists lfg_posts_active_idx on lfg_posts (status, expires_at desc);
+create index if not exists lfg_posts_source_idx on lfg_posts (source_hash, status);
 
-create table if not exists public.lfg_reports (
+create table if not exists lfg_reports (
   id bigint generated always as identity primary key,
-  post_id uuid not null references public.lfg_posts(id) on delete cascade,
+  post_id uuid not null references lfg_posts(id) on delete cascade,
   reason text not null,
   created_at timestamptz not null default now()
 );
 
-create table if not exists public.admin_actions (
+create table if not exists admin_actions (
   id bigint generated always as identity primary key,
   action text not null,
   target_id uuid,
@@ -41,9 +41,5 @@ create table if not exists public.admin_actions (
   created_at timestamptz not null default now()
 );
 
-alter table public.lfg_posts enable row level security;
-alter table public.lfg_reports enable row level security;
-alter table public.admin_actions enable row level security;
-
--- Public access is intentionally routed through server-side API handlers.
--- The service-role key bypasses RLS and must never be exposed to the browser.
+-- The database connection string is server-only. Public access is routed
+-- through validated Next.js API handlers; no database credential reaches the browser.

@@ -2811,6 +2811,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@neondatabase/serverless@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@neondatabase/serverless@npm:1.1.0"
+  checksum: 15fcae150fc5b1c6fb3da86a717c02587d49535b9ed1fe74b2f495c7392196a16c345a8f75e789a7637d2c1b4cda05e9a53a6c754849201888a6033af3cfcd6b
+  languageName: node
+  linkType: hard
+
 "@next/bundle-analyzer@npm:15.5.12":
   version: 15.5.12
   resolution: "@next/bundle-analyzer@npm:15.5.12"
@@ -3420,89 +3427,6 @@ __metadata:
   version: 1.15.0
   resolution: "@rushstack/eslint-patch@npm:1.15.0"
   checksum: 0b3f5951e66dabcaf5db4c1db789e1031701819caa69e09f8935cdd4aa0a41649936c2b2a5da795d79e5f56b8b6753b6e20bcfdf9343d4fb27a274a9566d7417
-  languageName: node
-  linkType: hard
-
-"@supabase/auth-js@npm:2.112.3":
-  version: 2.112.3
-  resolution: "@supabase/auth-js@npm:2.112.3"
-  dependencies:
-    tslib: 2.8.1
-  checksum: 2e7670d0d8908d3673a554638566e79648d020eb1f49de208b6d33fd001671f171d5960c6ba95dc6169a2f1651c662d5641fbb25ff00a4efdafa1b822ec5f0a5
-  languageName: node
-  linkType: hard
-
-"@supabase/functions-js@npm:2.112.3":
-  version: 2.112.3
-  resolution: "@supabase/functions-js@npm:2.112.3"
-  dependencies:
-    tslib: 2.8.1
-  checksum: 306423d8aaeee46d6299052d754654f95f14a1f76ceffd27744602fe245219a1a62d4f3db0669e2acec9f62f87a6f4595f243a92f4db3f236552ef9b2efc3a5a
-  languageName: node
-  linkType: hard
-
-"@supabase/phoenix@npm:0.4.5":
-  version: 0.4.5
-  resolution: "@supabase/phoenix@npm:0.4.5"
-  checksum: 49dd1dad8083df687fa54cbaa75f65cd5900b13e2f193c2e266ac8a2c7a71f1a250db748ef01297845533f9a9cb62c8f867e93058ecb05c003208276092601d4
-  languageName: node
-  linkType: hard
-
-"@supabase/postgrest-js@npm:2.112.3":
-  version: 2.112.3
-  resolution: "@supabase/postgrest-js@npm:2.112.3"
-  dependencies:
-    tslib: 2.8.1
-  checksum: 9aec328be3d4a49de5e7043111735cdf153bf3f4552e970e709622350ed57ceef324ec0e372fa86d9146ff6fc8d07f490ff49a73150b52bf4ae1a7002f548db9
-  languageName: node
-  linkType: hard
-
-"@supabase/realtime-js@npm:2.112.3":
-  version: 2.112.3
-  resolution: "@supabase/realtime-js@npm:2.112.3"
-  dependencies:
-    "@supabase/phoenix": 0.4.5
-    tslib: 2.8.1
-  checksum: e6f4d2efd8baeec00c199fb2429b08c3b390cbaa05e752f92bba1ea092ec604b3fbd4fd91aa5fbe0e42eacb15d52422661f5064f35c004bc045bb2b1bbbf6ddc
-  languageName: node
-  linkType: hard
-
-"@supabase/ssr@npm:^0.12.4":
-  version: 0.12.4
-  resolution: "@supabase/ssr@npm:0.12.4"
-  dependencies:
-    cookie: ^1.0.2
-  peerDependencies:
-    "@supabase/supabase-js": ^2.111.0
-  checksum: 399a1dfa80ddf566b6605e5a9da16dd6b4e0e0f9e18511e115ecbc7e0d562e91977b343438d0d7e466375e80bd6f1fcfc311d47196494783e5de276899105ef9
-  languageName: node
-  linkType: hard
-
-"@supabase/storage-js@npm:2.112.3":
-  version: 2.112.3
-  resolution: "@supabase/storage-js@npm:2.112.3"
-  dependencies:
-    iceberg-js: ^0.8.1
-    tslib: 2.8.1
-  checksum: a1db9c62ab7d86c1e63fa9e6d2a9655db1b52f23c812190519b94191aa1a4c986249d28c25f631002af8a271bec4ebc0a7251bbbbf10807d0661eb2ea16f4ee8
-  languageName: node
-  linkType: hard
-
-"@supabase/supabase-js@npm:^2.112.3":
-  version: 2.112.3
-  resolution: "@supabase/supabase-js@npm:2.112.3"
-  dependencies:
-    "@supabase/auth-js": 2.112.3
-    "@supabase/functions-js": 2.112.3
-    "@supabase/postgrest-js": 2.112.3
-    "@supabase/realtime-js": 2.112.3
-    "@supabase/storage-js": 2.112.3
-  peerDependencies:
-    "@opentelemetry/api": ">=1.0.0"
-  peerDependenciesMeta:
-    "@opentelemetry/api":
-      optional: true
-  checksum: f1f56d6efed1c1a395906dcff171cdeb1f92513fe30bfd39932e7a557743ce1e87eb6350c55e8a4f174ec89b9d0a8071285914413d6fda0cc2b5e64b7f2f1225
   languageName: node
   linkType: hard
 
@@ -4731,9 +4655,8 @@ __metadata:
     "@eslint/eslintrc": ^3.3.3
     "@eslint/js": ^9.18.0
     "@headlessui/react": 2.2.9
+    "@neondatabase/serverless": ^1.1.0
     "@next/bundle-analyzer": 15.5.12
-    "@supabase/ssr": ^0.12.4
-    "@supabase/supabase-js": ^2.112.3
     "@svgr/webpack": ^8.1.0
     "@tailwindcss/forms": ^0.5.11
     "@tailwindcss/postcss": ^4.1.18
@@ -5214,13 +5137,6 @@ __metadata:
   version: 2.0.0
   resolution: "convert-source-map@npm:2.0.0"
   checksum: 63ae9933be5a2b8d4509daca5124e20c14d023c820258e484e32dc324d34c2754e71297c94a05784064ad27615037ef677e3f0c00469fb55f409d2bb21261035
-  languageName: node
-  linkType: hard
-
-"cookie@npm:^1.0.2":
-  version: 1.1.1
-  resolution: "cookie@npm:1.1.1"
-  checksum: e40c4ff817a73ec0a41413654ca9a71e6207bd6e511151bb1d307aef2903eb59771127a85474afe0e12a8982804f7b03cce0bda798b55c306aca9608b4b9acab
   languageName: node
   linkType: hard
 
@@ -7311,13 +7227,6 @@ __metadata:
   version: 1.2.0
   resolution: "hyperdyperid@npm:1.2.0"
   checksum: 210029d1c86926f09109f6317d143f8b056fc38e8dd11b0c3e3205fc6c6ff8429fb55b4b9c2bce065462719ed9d34366eced387aaa0035d93eb76b306a8547ef
-  languageName: node
-  linkType: hard
-
-"iceberg-js@npm:^0.8.1":
-  version: 0.8.1
-  resolution: "iceberg-js@npm:0.8.1"
-  checksum: 679e52f82a285b3e1da69bfb7c6c54af95067ca56293299b4ffcc196329a4f2eeb1502fe55c0b44cc80e9eb1bf34001b76ee9f0e13268a753d0cfe8d27072e56
   languageName: node
   linkType: hard
 
@@ -11886,7 +11795,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:2.8.1, tslib@npm:^2.0.0, tslib@npm:^2.0.3, tslib@npm:^2.4.0, tslib@npm:^2.4.1, tslib@npm:^2.8.0":
+"tslib@npm:^2.0.0, tslib@npm:^2.0.3, tslib@npm:^2.4.0, tslib@npm:^2.4.1, tslib@npm:^2.8.0":
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: e4aba30e632b8c8902b47587fd13345e2827fa639e7c3121074d5ee0880723282411a8838f830b55100cbe4517672f84a2472667d355b81e8af165a55dc6203a

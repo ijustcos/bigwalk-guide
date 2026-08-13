@@ -11,7 +11,7 @@ An SEO-first, community-made guide for Big Walk with spoiler-controlled puzzle p
 - Private management links for listing owners
 - Reports, rate limits and optional Cloudflare Turnstile
 - Password-protected moderation dashboard at `/admin`
-- Supabase migration for posts, reports and administrator actions
+- Neon Postgres migration for posts, reports and administrator actions
 - Sitemap, robots, Open Graph metadata and responsive dark mode
 
 ## Local development
@@ -21,14 +21,14 @@ An SEO-first, community-made guide for Big Walk with spoiler-controlled puzzle p
 3. Run `corepack yarn dev`.
 4. Open `http://localhost:3000`.
 
-Without Supabase environment variables, Find Players runs in clearly labelled preview mode. Static guides and the rest of the site remain fully functional.
+Without `DATABASE_URL`, Find Players runs in clearly labelled preview mode. Static guides and the rest of the site remain fully functional.
 
-## Supabase setup
+## Neon setup
 
-1. Create a Supabase project.
-2. Run `supabase/migrations/0001_lfg.sql` in the SQL editor.
-3. Add `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` to the deployment environment.
-4. Never expose the service-role key in browser code.
+1. Add the Neon integration to the Vercel project, or create a Neon project manually.
+2. Run `neon/migrations/0001_lfg.sql` in the Neon SQL editor.
+3. Add the pooled Neon connection string as the server-only `DATABASE_URL` deployment variable.
+4. Never expose `DATABASE_URL` in browser code or prefix it with `NEXT_PUBLIC_`.
 
 ## Administrator
 
