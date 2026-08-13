@@ -28,20 +28,20 @@ export default function FindPlayersPage() {
       <section className="mt-14 grid gap-5 border-t border-slate-200 pt-10 md:grid-cols-3 dark:border-slate-800">
         <div>
           <h2 className="font-black">Short-lived by design</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-500">
+          <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
             Every listing expires after 2, 6 or 24 hours, so stale Join Codes do not pile up.
           </p>
         </div>
         <div>
           <h2 className="font-black">Protect your privacy</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-500">
+          <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
             Use a nickname. Never post your real name, phone number, address or other personal
             details.
           </p>
         </div>
         <div>
           <h2 className="font-black">Host keeps progress</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-500">
+          <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
             For continuing groups, agree who will host—the host owns the saved session progress.
           </p>
         </div>

@@ -58,14 +58,14 @@ const quickLinks = [
 export default function Home() {
   return (
     <div className="pb-10">
-      <section className="relative overflow-hidden rounded-[2rem] bg-[#153f38] px-6 py-14 text-white shadow-xl shadow-emerald-950/10 sm:px-10 lg:px-14 lg:py-20">
-        <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full border-[42px] border-[#f5c24d]/15" />
-        <div className="absolute right-32 -bottom-24 h-56 w-56 rounded-full bg-[#5f8f70]/20 blur-2xl" />
-        <div className="relative max-w-3xl">
+      <section className="relative overflow-hidden rounded-3xl bg-[#153f38] px-5 py-10 text-white shadow-xl shadow-emerald-950/10 sm:rounded-[2rem] sm:px-10 sm:py-14 lg:px-14 lg:py-20">
+        <div className="pointer-events-none absolute -top-20 -right-24 h-60 w-60 rounded-full border-[34px] border-[#f5c24d]/10 sm:-top-24 sm:-right-24 sm:h-80 sm:w-80 sm:border-[42px] sm:border-[#f5c24d]/15" />
+        <div className="pointer-events-none absolute right-12 -bottom-24 h-56 w-56 rounded-full bg-[#5f8f70]/20 blur-2xl sm:right-32" />
+        <div className="relative z-10 max-w-3xl">
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-bold tracking-[0.18em] text-[#f8d77d] uppercase">
             Updated for launch week
           </div>
-          <h1 className="text-4xl leading-[1.02] font-black tracking-[-0.04em] sm:text-6xl lg:text-7xl">
+          <h1 className="text-[2.5rem] leading-[1.02] font-black tracking-[-0.04em] sm:text-6xl lg:text-7xl">
             Stuck on your
             <br />
             <span className="text-[#f5c24d]">Big Walk?</span>

@@ -1,6 +1,7 @@
 'use client'
 
 import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 import { Check, Clock3, Copy, Filter, Flag, Mic, Plus, RefreshCw, Users, X } from 'lucide-react'
 import type { PublicLfgPost } from '@/lib/lfg'
 import TurnstileWidget from './TurnstileWidget'
@@ -162,8 +163,9 @@ export default function FindPlayersBoard() {
           </label>
         ))}
         <button
+          type="button"
           onClick={() => setFormOpen(true)}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#f5c24d] px-5 py-3 font-bold text-[#153f38] hover:bg-[#ffd66c]"
+          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#f5c24d] px-5 py-3 font-bold text-[#153f38] transition hover:bg-[#ffd66c]"
         >
           <Plus size={18} /> Post a group
         </button>
@@ -174,8 +176,9 @@ export default function FindPlayersBoard() {
           <Filter size={16} /> {filtered.length} active groups
         </div>
         <button
+          type="button"
           onClick={load}
-          className="rounded-lg p-2 text-slate-500 hover:bg-white"
+          className="grid h-11 w-11 place-items-center rounded-full text-slate-500 transition hover:bg-white dark:hover:bg-slate-800"
           aria-label="Refresh"
         >
           <RefreshCw size={17} className={loading ? 'animate-spin' : ''} />
@@ -191,18 +194,19 @@ export default function FindPlayersBoard() {
               className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"
             >
               <div className="flex items-start justify-between gap-4">
-                <div>
+                <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-bold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
                       {post.availability}
                     </span>
                     <span className="text-xs text-slate-400">{relativeTime(post.createdAt)}</span>
                   </div>
-                  <h2 className="mt-3 text-lg font-black">
+                  <h2 className="mt-3 text-lg font-black break-words">
                     {post.displayName} · {post.platform} · {post.region}
                   </h2>
                 </div>
                 <button
+                  type="button"
                   onClick={() => report(post.id)}
                   className="p-2 text-slate-400 hover:text-red-600"
                   aria-label="Report listing"
@@ -226,13 +230,15 @@ export default function FindPlayersBoard() {
                   {post.experience}
                 </span>
               </div>
-              <p className="mt-4 font-bold text-[#1f6b5b]">{post.goal}</p>
+              <p className="mt-4 font-bold break-words text-[#1f6b5b] dark:text-emerald-300">
+                {post.goal}
+              </p>
               {post.message && (
-                <p className="mt-1 text-sm leading-6 text-slate-500 dark:text-slate-400">
+                <p className="mt-1 text-sm leading-6 break-words text-slate-500 dark:text-slate-400">
                   {post.message}
                 </p>
               )}
-              <div className="mt-5 flex items-center justify-between gap-3 border-t border-slate-100 pt-4 dark:border-slate-800">
+              <div className="mt-5 flex flex-col items-start justify-between gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center dark:border-slate-800">
                 <span className="inline-flex items-center gap-1.5 text-xs text-slate-400">
                   <Clock3 size={14} /> Expires{' '}
                   {new Date(post.expiresAt).toLocaleTimeString([], {
@@ -242,11 +248,12 @@ export default function FindPlayersBoard() {
                 </span>
                 {post.joinCode && (
                   <button
+                    type="button"
                     onClick={async () => {
                       if (isRevealed) await navigator.clipboard.writeText(post.joinCode)
                       else setRevealed([...revealed, post.id])
                     }}
-                    className="inline-flex items-center gap-2 rounded-lg bg-[#153f38] px-3 py-2 text-xs font-bold text-white"
+                    className="inline-flex min-h-10 max-w-full items-center gap-2 rounded-lg bg-[#153f38] px-3 py-2 text-xs font-bold text-white"
                   >
                     {isRevealed ? (
                       <>
@@ -269,24 +276,33 @@ export default function FindPlayersBoard() {
         </div>
       )}
 
-      {formOpen && (
-        <div className="fixed inset-0 z-[100] overflow-y-auto bg-slate-950/60 p-4 backdrop-blur-sm">
-          <div className="mx-auto my-6 max-w-2xl rounded-3xl bg-[#f7f4ea] p-6 shadow-2xl sm:p-8 dark:bg-slate-950">
-            <div className="flex items-center justify-between">
+      <Dialog open={formOpen} onClose={setFormOpen} className="relative z-[250]">
+        <DialogBackdrop
+          transition
+          className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm transition duration-200 data-closed:opacity-0"
+        />
+        <div className="fixed inset-0 overflow-y-auto p-3 sm:p-6">
+          <DialogPanel
+            transition
+            className="mx-auto w-full max-w-2xl rounded-3xl bg-[#f7f4ea] shadow-2xl transition duration-200 data-closed:translate-y-3 data-closed:opacity-0 dark:bg-slate-950"
+          >
+            <div className="sticky top-0 z-10 flex items-center justify-between gap-4 rounded-t-3xl border-b border-slate-200 bg-[#f7f4ea]/95 px-5 py-5 shadow-sm backdrop-blur sm:px-8 dark:border-slate-800 dark:bg-slate-950/95">
               <div>
-                <h2 className="text-2xl font-black">Post a group</h2>
+                <DialogTitle className="text-2xl font-black">Post a group</DialogTitle>
                 <p className="mt-1 text-sm text-slate-500">
                   No account required. Posts expire automatically.
                 </p>
               </div>
               <button
+                type="button"
                 onClick={() => setFormOpen(false)}
-                className="rounded-full p-2 hover:bg-white dark:hover:bg-slate-800"
+                className="grid h-11 w-11 shrink-0 place-items-center rounded-full hover:bg-white dark:hover:bg-slate-800"
+                aria-label="Close post form"
               >
                 <X />
               </button>
             </div>
-            <form onSubmit={submit} className="mt-7 grid gap-5 sm:grid-cols-2">
+            <form onSubmit={submit} className="grid gap-5 p-5 sm:grid-cols-2 sm:p-8">
               <label className="text-sm font-bold">
                 Display name
                 <input
@@ -388,7 +404,7 @@ export default function FindPlayersBoard() {
               </div>
               {message && (
                 <div
-                  className={`rounded-xl p-3 text-sm sm:col-span-2 ${message.startsWith('Published') ? 'bg-emerald-100 text-emerald-900' : 'bg-amber-100 text-amber-900'}`}
+                  className={`rounded-xl p-3 text-sm break-words sm:col-span-2 ${message.startsWith('Published') ? 'bg-emerald-100 text-emerald-900' : 'bg-amber-100 text-amber-900'}`}
                 >
                   {message}
                 </div>
@@ -409,9 +425,9 @@ export default function FindPlayersBoard() {
                 Publish group
               </button>
             </form>
-          </div>
+          </DialogPanel>
         </div>
-      )}
+      </Dialog>
     </div>
   )
 }

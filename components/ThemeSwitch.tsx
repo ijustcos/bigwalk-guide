@@ -1,23 +1,16 @@
 'use client'
 
-import { Fragment, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTheme } from 'next-themes'
-import {
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  Radio,
-  RadioGroup,
-  Transition,
-} from '@headlessui/react'
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
+import { Check } from 'lucide-react'
 
 const Sun = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 20 20"
     fill="currentColor"
-    className="group:hover:text-gray-100 h-6 w-6"
+    className="h-5 w-5"
   >
     <path
       fillRule="evenodd"
@@ -31,7 +24,7 @@ const Moon = () => (
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 20 20"
     fill="currentColor"
-    className="group:hover:text-gray-100 h-6 w-6"
+    className="h-5 w-5"
   >
     <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
   </svg>
@@ -45,14 +38,20 @@ const Monitor = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
-    className="group:hover:text-gray-100 h-6 w-6"
+    className="h-5 w-5"
   >
     <rect x="3" y="3" width="14" height="10" rx="2" ry="2"></rect>
     <line x1="7" y1="17" x2="13" y2="17"></line>
     <line x1="10" y1="13" x2="10" y2="17"></line>
   </svg>
 )
-const Blank = () => <svg className="h-6 w-6" />
+const Blank = () => <span className="block h-5 w-5" />
+
+const options = [
+  { value: 'light', label: 'Light', icon: Sun },
+  { value: 'dark', label: 'Dark', icon: Moon },
+  { value: 'system', label: 'System', icon: Monitor },
+] as const
 
 const ThemeSwitch = () => {
   const [mounted, setMounted] = useState(false)
@@ -62,77 +61,37 @@ const ThemeSwitch = () => {
   useEffect(() => setMounted(true), [])
 
   return (
-    <div className="flex items-center">
-      <Menu as="div" className="relative inline-block text-left">
-        <div className="hover:text-primary-500 dark:hover:text-primary-400 flex items-center justify-center">
-          <MenuButton aria-label="Theme switcher">
-            {mounted ? resolvedTheme === 'dark' ? <Moon /> : <Sun /> : <Blank />}
-          </MenuButton>
-        </div>
-        <Transition
-          as={Fragment}
-          enter="transition ease-out duration-100"
-          enterFrom="transform opacity-0 scale-95"
-          enterTo="transform opacity-100 scale-100"
-          leave="transition ease-in duration-75"
-          leaveFrom="transform opacity-100 scale-100"
-          leaveTo="transform opacity-0 scale-95"
-        >
-          <MenuItems className="ring-opacity-5 absolute right-0 z-50 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black focus:outline-hidden dark:bg-gray-800">
-            <RadioGroup value={theme} onChange={setTheme}>
-              <div className="p-1">
-                <Radio value="light">
-                  <MenuItem>
-                    {({ focus }) => (
-                      <button
-                        className={`${focus ? 'bg-primary-600 text-white' : ''} group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                      >
-                        <div className="mr-2">
-                          <Sun />
-                        </div>
-                        Light
-                      </button>
-                    )}
-                  </MenuItem>
-                </Radio>
-                <Radio value="dark">
-                  <MenuItem>
-                    {({ focus }) => (
-                      <button
-                        className={`${
-                          focus ? 'bg-primary-600 text-white' : ''
-                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                      >
-                        <div className="mr-2">
-                          <Moon />
-                        </div>
-                        Dark
-                      </button>
-                    )}
-                  </MenuItem>
-                </Radio>
-                <Radio value="system">
-                  <MenuItem>
-                    {({ focus }) => (
-                      <button
-                        className={`${
-                          focus ? 'bg-primary-600 text-white' : ''
-                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                      >
-                        <div className="mr-2">
-                          <Monitor />
-                        </div>
-                        System
-                      </button>
-                    )}
-                  </MenuItem>
-                </Radio>
-              </div>
-            </RadioGroup>
-          </MenuItems>
-        </Transition>
-      </Menu>
-    </div>
+    <Menu as="div" className="relative shrink-0 text-left">
+      <MenuButton
+        aria-label="Choose color theme"
+        className="grid h-11 w-11 place-items-center rounded-full text-slate-700 transition hover:bg-white hover:text-[#1f6b5b] dark:text-slate-200 dark:hover:bg-slate-800"
+      >
+        {mounted ? resolvedTheme === 'dark' ? <Moon /> : <Sun /> : <Blank />}
+      </MenuButton>
+      <MenuItems
+        anchor="bottom end"
+        portal
+        className="z-[300] mt-2 w-40 rounded-2xl border border-slate-200 bg-white p-1.5 text-slate-800 shadow-2xl shadow-slate-950/15 focus:outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+      >
+        {options.map(({ value, label, icon: Icon }) => (
+          <MenuItem key={value}>
+            {({ focus }) => (
+              <button
+                type="button"
+                onClick={() => setTheme(value)}
+                className={`flex min-h-11 w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold transition ${
+                  focus ? 'bg-[#edf4ee] text-[#153f38] dark:bg-slate-800 dark:text-white' : ''
+                }`}
+              >
+                <Icon />
+                <span className="flex-1 text-left">{label}</span>
+                {theme === value && <Check size={16} aria-hidden />}
+              </button>
+            )}
+          </MenuItem>
+        ))}
+      </MenuItems>
+    </Menu>
   )
 }
 

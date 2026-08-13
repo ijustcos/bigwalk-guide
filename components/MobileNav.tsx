@@ -1,39 +1,27 @@
 'use client'
 
-import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react'
-import { disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock'
-import { Fragment, useState, useEffect, useRef } from 'react'
+import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
+import { useState } from 'react'
+import { X } from 'lucide-react'
 import Link from './Link'
 import headerNavLinks from '@/data/headerNavLinks'
 
 const MobileNav = () => {
   const [navShow, setNavShow] = useState(false)
-  const navRef = useRef(null)
-
-  const onToggleNav = () => {
-    setNavShow((status) => {
-      if (status) {
-        enableBodyScroll(navRef.current)
-      } else {
-        // Prevent scrolling
-        disableBodyScroll(navRef.current)
-      }
-      return !status
-    })
-  }
-
-  useEffect(() => {
-    return clearAllBodyScrollLocks
-  })
 
   return (
     <>
-      <button aria-label="Toggle Menu" onClick={onToggleNav} className="sm:hidden">
+      <button
+        type="button"
+        aria-label="Open navigation menu"
+        onClick={() => setNavShow(true)}
+        className="grid h-11 w-11 shrink-0 place-items-center rounded-full text-slate-700 transition hover:bg-white hover:text-[#1f6b5b] md:hidden dark:text-slate-200 dark:hover:bg-slate-800"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
           fill="currentColor"
-          className="hover:text-primary-500 dark:hover:text-primary-400 h-8 w-8 text-gray-900 dark:text-gray-100"
+          className="h-6 w-6"
         >
           <path
             fillRule="evenodd"
@@ -42,65 +30,51 @@ const MobileNav = () => {
           />
         </svg>
       </button>
-      <Transition appear show={navShow} as={Fragment} unmount={false}>
-        <Dialog as="div" onClose={onToggleNav} unmount={false}>
-          <TransitionChild
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-            unmount={false}
+      <Dialog open={navShow} onClose={setNavShow} className="relative z-[250] md:hidden">
+        <DialogBackdrop
+          transition
+          className="fixed inset-0 bg-slate-950/45 backdrop-blur-sm transition duration-200 data-closed:opacity-0"
+        />
+        <div className="fixed inset-0 flex justify-end">
+          <DialogPanel
+            transition
+            className="h-full w-[86vw] max-w-sm overflow-y-auto border-l border-slate-200 bg-[#f7f4ea] p-6 shadow-2xl transition duration-300 ease-out data-closed:translate-x-full dark:border-slate-800 dark:bg-[#0e1716]"
           >
-            <div className="fixed inset-0 z-60 bg-black/25" />
-          </TransitionChild>
-
-          <TransitionChild
-            as={Fragment}
-            enter="transition ease-in-out duration-300 transform"
-            enterFrom="translate-x-full opacity-0"
-            enterTo="translate-x-0 opacity-95"
-            leave="transition ease-in duration-200 transform"
-            leaveFrom="translate-x-0 opacity-95"
-            leaveTo="translate-x-full opacity-0"
-            unmount={false}
-          >
-            <DialogPanel className="fixed top-0 left-0 z-70 h-full w-full bg-white/95 duration-300 dark:bg-gray-950/98">
-              <nav
-                ref={navRef}
-                className="mt-8 flex h-full basis-0 flex-col items-start overflow-y-auto pt-2 pl-12 text-left"
-              >
-                {headerNavLinks.map((link) => (
-                  <Link
-                    key={link.title}
-                    href={link.href}
-                    className="hover:text-primary-500 dark:hover:text-primary-400 mb-4 py-2 pr-4 text-2xl font-bold tracking-widest text-gray-900 outline outline-0 dark:text-gray-100"
-                    onClick={onToggleNav}
-                  >
-                    {link.title}
-                  </Link>
-                ))}
-              </nav>
-
+            <div className="flex items-center justify-between border-b border-slate-200 pb-5 dark:border-slate-800">
+              <DialogTitle className="text-sm font-black tracking-[0.16em] text-[#1f6b5b] uppercase dark:text-emerald-300">
+                Navigate
+              </DialogTitle>
               <button
-                className="hover:text-primary-500 dark:hover:text-primary-400 fixed top-7 right-4 z-80 h-16 w-16 p-4 text-gray-900 dark:text-gray-100"
-                aria-label="Toggle Menu"
-                onClick={onToggleNav}
+                type="button"
+                className="grid h-11 w-11 place-items-center rounded-full text-slate-700 hover:bg-white dark:text-slate-200 dark:hover:bg-slate-800"
+                aria-label="Close navigation menu"
+                onClick={() => setNavShow(false)}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                  <path
-                    fillRule="evenodd"
-                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <X size={24} />
               </button>
-            </DialogPanel>
-          </TransitionChild>
-        </Dialog>
-      </Transition>
+            </div>
+            <nav className="mt-6 flex flex-col gap-2" aria-label="Mobile navigation">
+              {headerNavLinks.map((link) => (
+                <Link
+                  key={link.title}
+                  href={link.href}
+                  className={`rounded-2xl px-4 py-3.5 text-xl font-black tracking-tight transition hover:bg-white hover:text-[#153f38] dark:hover:bg-slate-800 dark:hover:text-white ${
+                    link.href === '/find-players'
+                      ? 'mt-3 bg-[#f5c24d] text-[#153f38] hover:bg-[#ffd66c]'
+                      : 'text-slate-900 dark:text-slate-100'
+                  }`}
+                  onClick={() => setNavShow(false)}
+                >
+                  {link.title}
+                </Link>
+              ))}
+            </nav>
+            <p className="mt-10 border-t border-slate-200 pt-6 text-sm leading-6 text-slate-500 dark:border-slate-800 dark:text-slate-400">
+              Fast puzzle answers, multiplayer help and fresh groups for Big Walk.
+            </p>
+          </DialogPanel>
+        </div>
+      </Dialog>
     </>
   )
 }

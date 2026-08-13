@@ -31,13 +31,14 @@ export default function TurnstileWidget({ onToken }: { onToken: (token: string) 
         strategy="afterInteractive"
         onLoad={() => setReady(true)}
       />
-      <div className="min-h-16">
+      <div className="min-h-16 min-w-0 overflow-hidden">
         {ready && (
           <div
             className="cf-turnstile"
             data-sitekey={siteKey}
             data-callback="onBigWalkTurnstile"
             data-theme="auto"
+            data-size="flexible"
           />
         )}
       </div>

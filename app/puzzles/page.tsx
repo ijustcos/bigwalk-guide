@@ -46,7 +46,9 @@ export default function PuzzlesPage() {
             </div>
             <div className="p-5">
               <h2 className="leading-6 font-black group-hover:text-[#1f6b5b]">{post.title}</h2>
-              <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-500">{post.summary}</p>
+              <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
+                {post.summary}
+              </p>
               <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#1f6b5b]">
                 Hints and solution <ArrowRight size={14} />
               </span>

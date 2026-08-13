@@ -7,7 +7,7 @@ import SearchButton from './SearchButton'
 
 const Header = () => {
   let headerClass =
-    'flex items-center w-full border-b border-slate-200/80 bg-[#f7f4ea]/90 dark:border-slate-800 dark:bg-[#0e1716]/90 justify-between py-5 backdrop-blur'
+    'relative z-[100] flex min-h-16 w-full items-center justify-between border-b border-slate-200/80 bg-[#f7f4ea]/95 py-3 backdrop-blur-xl dark:border-slate-800 dark:bg-[#0e1716]/95 sm:min-h-20 sm:py-4'
   if (siteMetadata.stickyNav) {
     headerClass += ' sticky top-0 z-50'
   }
@@ -29,15 +29,15 @@ const Header = () => {
           </div>
         </div>
       </Link>
-      <div className="flex items-center space-x-4 leading-5 sm:-mr-6 sm:space-x-6">
-        <div className="no-scrollbar hidden max-w-40 items-center gap-x-2 overflow-x-auto sm:flex md:max-w-72 lg:max-w-none">
+      <div className="flex items-center gap-1 leading-5 sm:gap-2">
+        <div className="no-scrollbar hidden items-center gap-x-1 md:flex lg:gap-x-2">
           {headerNavLinks
             .filter((link) => link.href !== '/')
             .map((link) => (
               <Link
                 key={link.title}
                 href={link.href}
-                className={`rounded-full px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-white hover:text-[#153f38] dark:text-slate-200 dark:hover:bg-slate-800 ${link.href === '/find-players' ? 'bg-[#f5c24d] text-[#153f38] hover:bg-[#ffd66c]' : ''}`}
+                className={`rounded-full px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-white hover:text-[#153f38] dark:text-slate-200 dark:hover:bg-slate-800 ${link.href === '/find-players' ? 'bg-[#f5c24d] text-[#153f38] hover:bg-[#ffd66c] dark:text-[#153f38]' : ''}`}
               >
                 {link.title}
               </Link>
