@@ -95,6 +95,20 @@ module.exports = () => {
         },
       ]
     },
+    async redirects() {
+      return [
+        {
+          source: '/help/low-fps-stutter/',
+          destination: '/help/low-fps-performance/',
+          permanent: true,
+        },
+        {
+          source: '/help/connection-failed/',
+          destination: '/help/join-code-not-working/',
+          permanent: true,
+        },
+      ]
+    },
     webpack: (config, options) => {
       config.module.rules.push({
         test: /\.svg$/,

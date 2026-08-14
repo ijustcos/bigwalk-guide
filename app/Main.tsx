@@ -85,7 +85,7 @@ const quickLinks = [
   {
     title: 'Technical help',
     body: 'Fix connection, microphone, controller and performance problems.',
-    href: '/help/connection-failed',
+    href: '/help/join-code-not-working',
     icon: Headphones,
   },
 ]

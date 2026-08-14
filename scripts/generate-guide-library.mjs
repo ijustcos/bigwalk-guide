@@ -2,11 +2,157 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 const root = process.cwd()
-const date = '2026-08-14'
+const date = '2026-08-15'
 const images = Array.from(
   { length: 8 },
   (_, index) => `/static/images/big-walk/official-0${index + 1}.jpg`
 )
+
+const imageDescriptions = {
+  '/static/images/big-walk/official-01.jpg':
+    'four players carrying radios, a megaphone, a backpack and other communication tools',
+  '/static/images/big-walk/official-02.jpg':
+    'players stacking and gesturing together on the beach at sunset',
+  '/static/images/big-walk/official-03.jpg':
+    'a group navigating by landmarks with binoculars and a walkie-talkie',
+  '/static/images/big-walk/official-04.jpg':
+    'a group using a lantern to stay together in the island at night',
+  '/static/images/big-walk/official-05.jpg':
+    'players approaching a raised green structure in the forest',
+  '/static/images/big-walk/official-06.jpg': 'players waiting beside a train platform at sunset',
+  '/static/images/big-walk/official-07.jpg':
+    'players stacking beneath a yellow crane to reach a high interaction',
+  '/static/images/big-walk/official-08.jpg':
+    'players communicating through glass while arranging picture symbols',
+}
+
+function imageForPage(page, index) {
+  const search = `${page.slug} ${page.title} ${page.category}`.toLowerCase()
+  if (/symbol|charades|sound|speaker|headphone|locked-room|button-room/.test(search)) {
+    return '/static/images/big-walk/official-08.jpg'
+  }
+  if (/crane|head-stack|stacking|climb/.test(search)) {
+    return '/static/images/big-walk/official-07.jpg'
+  }
+  if (/train|station|big-ride/.test(search)) {
+    return '/static/images/big-walk/official-06.jpg'
+  }
+  if (/green|chairlift|scaffolding/.test(search)) {
+    return '/static/images/big-walk/official-05.jpg'
+  }
+  if (/lantern|night|light|flare|torch/.test(search)) {
+    return '/static/images/big-walk/official-04.jpg'
+  }
+  if (/map|gps|compass|binocular|location|tower/.test(search)) {
+    return '/static/images/big-walk/official-03.jpg'
+  }
+  if (/beach|tutorial|drawbridge|beginner|sunset/.test(search)) {
+    return '/static/images/big-walk/official-02.jpg'
+  }
+  if (/multiplayer|radio|megaphone|walkie|backpack|item|tool/.test(search)) {
+    return '/static/images/big-walk/official-01.jpg'
+  }
+  if (page.category === 'Technical Help' || page.category === 'LFG') {
+    return '/static/images/big-walk/official-01.jpg'
+  }
+  return images[index % images.length]
+}
+
+function imageCaption(page, image) {
+  const prefix = `Official Big Walk screenshot showing ${imageDescriptions[image]}.`
+  if (page.category === 'Puzzle') {
+    return `${prefix} Use the identifying features and coordinates in this guide to confirm the exact puzzle.`
+  }
+  if (page.category === 'Location' || page.category === 'Tower') {
+    return `${prefix} Pair the visual landmarks with the written route and coordinates below.`
+  }
+  if (page.category === 'Technical Help') {
+    return `${prefix} This is gameplay context; menu names and troubleshooting steps are written below.`
+  }
+  return `${prefix} The guide below explains the relevant route, item or multiplayer behavior.`
+}
+
+function conciseSummary(answer) {
+  if (answer.length <= 180) return answer
+  const firstSentence = answer.match(/^.*?[.!?](?:\s|$)/)?.[0]?.trim()
+  if (firstSentence && firstSentence.length >= 60 && firstSentence.length <= 180) {
+    return firstSentence
+  }
+  return `${answer.slice(0, 177).trimEnd()}...`
+}
+
+const extraSections = {
+  'join-code-not-working': `## Check the error in this order
+
+1. **Nothing happens:** confirm the host has pressed Start and loaded their character into the world.
+2. **The code is rejected:** ask for the current code from Session Details; codes change when a host restarts.
+3. **Connection times out:** compare the first two version numbers and set every device clock to automatic.
+4. **Only cross-platform players fail:** confirm Crossplay is On in Big Walk settings on each system.
+
+If a fresh session still fails, record the host platform, joining platform, full error text and both version numbers before contacting support.`,
+  'crossplay-not-working': `## Supported combinations
+
+Windows, Mac, PlayStation 5 and Nintendo Switch 2 can share the same session. Xbox is not currently supported. Cross-platform players should use a Join Code because platform friend lists do not span every system.
+
+## Launch-week failure patterns
+
+Current player reports repeatedly point to three causes: the host never entered the world, Switch 2 was on a different minor version, or a console clock was not synchronized. These reports support the troubleshooting order above; the official FAQ remains the authority for supported platforms and version matching.`,
+  'switch2-connection': `## Switch 2 checks that matter most
+
+- Open System Settings and synchronize date, time and timezone automatically.
+- Confirm Crossplay is On inside Big Walk.
+- Compare the first two game-version numbers with the host.
+- Let the host enter the world before typing the Join Code.
+
+If another Switch 2 can join the same host but yours cannot, include the console system version and exact Big Walk version in a support report.`,
+  'local-coop-split-screen': `## Can two people play from the same home?
+
+Yes, but each person needs a supported system and copy of the game. House House recommends separate rooms so players cannot hear unrestricted speech or see information on the other screen. Use the built-in voice or text chat so walls, distance and communication tools continue to affect puzzles.
+
+## What will not work
+
+Connecting a second controller does not create a second player. PlayStation Portal remote play also does not turn one copy into split screen; two simultaneous players still need separate accounts, devices and access to the game.`,
+  'best-group-size': `## Pick by the group you can actually keep together
+
+| Returning players | Recommended world | What to expect |
+| --- | --- | --- |
+| 2 | 2-player | Focused roles and easiest scheduling |
+| 3 | 3-player | More communication chains without a crowded lobby |
+| 4 or more | 4+ | More simultaneous roles and more regrouping |
+
+The world setting changes challenge requirements; it does not cap the lobby. A 2-player world can still accept additional friends up to the 12-player session limit.`,
+  'find-discord-and-lfg': `## Information that gets useful replies
+
+- Region and timezone
+- Platform and whether crossplay is acceptable
+- Language and microphone or text-chat preference
+- New game, current tower or 100% cleanup
+- Minimum age or calm/chaotic play preference
+- The next two-hour window when you can actually play
+
+Do not post a permanent account login, phone number or reusable password. A Big Walk Join Code is temporary, but it is still safer to share it only when the group is ready.`,
+  'what-to-do-after-tutorial': `## The four opening challenges
+
+- **Yellow crane:** stack players so the upper player can press the button underneath.
+- **Spyglass and red light:** one player holds the nearby control while another follows the indicated direction.
+- **Blue symbol house:** the inside player describes symbols for the outside player to arrange.
+- **Green scaffolding:** players coordinate the separated buttons within the timing window.
+
+Return every red piece before shaping the key. Solving a mechanism does not count if its physical reward is still lying at the puzzle.`,
+  'what-to-do-after-red-tower': `## Choose the next objective by what your group needs
+
+- **Need faster travel:** work toward Blue Tower and the trains.
+- **Need access to high routes:** work toward Green Tower and the chairlift.
+- **Still getting lost:** stay in the Map Room long enough to understand flags, loose rewards and submitted rewards.
+- **Cleaning up puzzles:** take the portable map, a compass and walkie-talkies before splitting up.
+
+There is no mandatory colored-tower order after the opening route.`,
+  'map-room-location': `## How to recognize the correct building
+
+The Map Room is the large blue building near the starting hub and the bottom of the long red stairs. Its color causes confusion: Blue Tower does not open it. The completed Red Tower key does.
+
+Inside you will find the large progress map, a portable folding map, a compass and laser pointers. The large map is also the fastest way to identify rewards that were solved but never submitted.`,
+}
 
 const urls = {
   faq: 'https://bigwalk.game/faq/',
@@ -22,6 +168,9 @@ const urls = {
   voice:
     'https://www.pcgamer.com/games/puzzle/big-walk-patch-addresses-voice-volume-complaints-with-restraint-we-consider-it-an-important-part-of-the-games-design-that-you-can-only-hear-players-who-are-close-to-you/',
   number: 'https://www.pcgamer.com/games/puzzle/big-walk-number-puzzle-4166-1899/',
+  crossplay: 'https://www.reddit.com/r/BigWalk/comments/1vhairy/crossplay_does_not_work/',
+  localCoop:
+    'https://www.reddit.com/r/gaming/comments/1vkoru0/were_house_house_we_made_untitled_goose_game_and/',
 }
 
 function yaml(value) {
@@ -43,13 +192,55 @@ function sourceLines(sources) {
 function writePage(page, index) {
   const directory = path.join(root, 'data', 'blog', page.section)
   fs.mkdirSync(directory, { recursive: true })
-  const image = images[index % images.length]
-  const inlineImage = images[(index + 3) % images.length]
+  const image = imageForPage(page, index)
+  const inlineImage = image
   const aliases = page.aliases || []
   const tags = page.tags || [page.category.toLowerCase(), 'big-walk']
   const steps = (page.steps || []).map((step, stepIndex) => `${stepIndex + 1}. ${step}`).join('\n')
   const checklist = (page.checklist || []).map((item) => `- ${item}`).join('\n')
   const related = (page.related || []).map(([label, href]) => `- [${label}](${href})`).join('\n')
+  const isPuzzle = page.category === 'Puzzle'
+  const answerSection = isPuzzle
+    ? `## How to identify it
+
+This guide covers **${aliases[0] || page.title}** at **${page.location}**. Confirm the visible objects and coordinates before opening a hint; Big Walk does not display official puzzle names.
+
+## Hint ladder
+
+<Spoiler label="Show a light hint">
+  ${page.hints?.[0] || page.context}
+</Spoiler>
+
+<Spoiler label="Show a stronger hint">
+  ${page.hints?.[1] || page.steps?.[1] || 'Assign each player a position and agree on one short signal before activating the puzzle.'}
+</Spoiler>
+
+## Quick solution
+
+<Spoiler label="Reveal the quick solution">
+  ${page.answer}
+</Spoiler>`
+    : `## The useful answer
+
+${page.answer}`
+  const stepsSection = isPuzzle
+    ? `## Complete step-by-step solution
+
+<Spoiler label="Reveal every step">
+
+${steps}
+
+</Spoiler>`
+    : `## Step by step
+
+${steps}`
+  const contextSection = isPuzzle
+    ? ''
+    : `## Why players get stuck here
+
+${page.context}
+
+${extraSections[page.slug] ? `${extraSections[page.slug]}\n\n` : ''}`
   const supportNote =
     page.supportNote ||
     {
@@ -87,33 +278,23 @@ images: [${yaml(image)}]
 layout: GuideLayout
 ---
 
-## The useful answer
-
-${page.answer}
+${answerSection}
 
 <GameImage
   src="${inlineImage}"
-  alt="Big Walk players exploring and solving challenges together"
-  caption="Official Big Walk screenshot. Use landmarks and team communication to orient yourself before following a guide."
+  alt="Official Big Walk screenshot showing ${imageDescriptions[inlineImage]}"
+  caption="${imageCaption(page, inlineImage)}"
 />
 
-## Step by step
+${stepsSection}
 
-${steps}
-
-## Why players get stuck here
-
-${page.context}
-
-## Quick checklist
-
-${checklist}
-
+${contextSection}
+${checklist ? `## Quick checklist\n\n${checklist}\n\n` : ''}
 ## Verify it before moving on
 
 ${supportNote}
 
-${page.spoiler ? `## Full solution\n\n<Spoiler label="Reveal the complete solution">\n  ${page.spoiler}\n</Spoiler>\n\n` : ''}## Related Big Walk help
+${page.spoiler && !isPuzzle ? `## Full solution\n\n<Spoiler label="Reveal the complete solution">\n  ${page.spoiler}\n</Spoiler>\n\n` : ''}## Related Big Walk help
 
 ${related}
 
@@ -388,6 +569,10 @@ const pages = puzzles.map((puzzle) => {
       'Collect the red control-panel piece after the confetti and carry it to the tower you are progressing.',
     ],
     context: `Big Walk does not give most challenges official names. Players often search by the visible object, nearby tower or coordinates. This page uses all three so you can confirm the correct puzzle before revealing the answer. ${tip}`,
+    hints: [
+      tip,
+      'Split the team into clear roles before starting: one side observes, holds or signals while the other side moves, places or completes the interaction.',
+    ],
     checklist: [
       'At least two players are present',
       'The team has agreed on short signals',
@@ -554,7 +739,7 @@ items.forEach((item, itemIndex) => {
     slug,
     title,
     category: 'Item',
-    summary: `Where to find this Big Walk tool, what it actually does, when it is useful and the mistake most groups make with it.`,
+    summary: conciseSummary(`Find it ${location}. Use it to ${use}. ${warning}`),
     aliases: [`Big Walk ${slug.replaceAll('-', ' ')}`, title.replace(/^Big Walk /, '')],
     location,
     answer: `Find it ${location}. Its main use is to ${use}.`,
@@ -826,15 +1011,15 @@ const factPages = [
     'local-coop-split-screen',
     'Does Big Walk Have Split Screen or Local Co-op?',
     'Multiplayer',
-    'No split-screen mode is listed. Big Walk is designed as online co-op, and its proximity and blocked-communication puzzles work through each player’s own system.',
+    'No. Big Walk does not have split screen or local co-op. House House says each player needs a separate device because restricted information and communication are central to its puzzles.',
     [
       'Give each player a supported copy and device.',
       'Join the same hosted session by friends list or code.',
       'Use in-game voice or text instead of room-wide shortcuts.',
     ],
-    'Playing in the same room can bypass communication restrictions even if each person has a device, so headphones preserve the intended puzzle.',
-    'Official FAQ',
-    urls.faq,
+    'House House recommends separate rooms when two systems are in the same home, because overhearing or watching another screen reveals information that several puzzles deliberately hide.',
+    'House House developer AMA',
+    urls.localCoop,
   ],
   [
     'multiplayer',
@@ -1133,11 +1318,11 @@ const factPages = [
     'join-code-not-working',
     'Big Walk Join Code Not Working: Fixes in Order',
     'Technical Help',
-    'Make sure the host is already inside the world, both players have crossplay enabled, the first two version numbers match and every system clock is correct.',
+    'Make sure the host has loaded into the world, the first two version numbers match and every system clock is correct. Then restart the game and use the current session code.',
     [
       'Host loads fully into the save before sharing the code.',
       'Compare version numbers on both clients.',
-      'Enable crossplay and synchronize date/time automatically.',
+      'Synchronize date, time and timezone automatically.',
       'Restart the game and create a fresh code.',
     ],
     'Most “wrong code” reports are actually session-state, version or clock problems. A code copied before the world is active may not connect.',
@@ -1149,16 +1334,17 @@ const factPages = [
     'crossplay-not-working',
     'Big Walk Crossplay Not Working: PC, PS5 and Switch 2',
     'Technical Help',
-    'Enable crossplay on every system, update all copies, synchronize system clocks and use the active host code rather than a platform friends list.',
+    'Turn Crossplay on in Big Walk settings, let the host enter the world, match the first two version numbers and synchronize every system clock before retrying the active Join Code.',
     [
-      'Verify supported platforms.',
+      'Confirm Crossplay is On in Big Walk settings.',
+      'Let the host load their character into the world.',
       'Update and compare the first two version numbers.',
       'Set date and time automatically.',
       'Have the host reload and issue a new code.',
     ],
-    'Cross-platform friends may not appear through the same platform friend list; code entry is the reliable path.',
-    'Official FAQ',
-    urls.faq,
+    'The most common false start is waiting together at the title screen. The host must start the world before the other players can join it.',
+    'Launch-week crossplay troubleshooting thread',
+    urls.crossplay,
   ],
   [
     'help',
@@ -1304,26 +1490,10 @@ const factPages = [
   ],
   [
     'help',
-    'low-fps-stutter',
-    'Big Walk Low FPS and Stutter Fixes',
-    'Technical Help',
-    'Update graphics drivers, lower resolution or demanding display settings, close overlays and test again before changing several options at once.',
-    [
-      'Install current GPU and system updates.',
-      'Close recording overlays and heavy background apps.',
-      'Lower one graphics setting at a time.',
-      'Restart and compare in the same area.',
-    ],
-    'Large group sessions and visually busy landmarks are better benchmarks than an empty starting area.',
-    'Official FAQ',
-    urls.faq,
-  ],
-  [
-    'help',
     'switch2-connection',
     'Big Walk Switch 2 Connection Troubleshooting',
     'Technical Help',
-    'Synchronize the Switch 2 clock, update the game, enable crossplay and enter a code created after the host loads into the world.',
+    'Synchronize the Switch 2 clock, update the game, turn Crossplay on and enter a code created after the host has loaded into the world.',
     [
       'Set date/time automatically.',
       'Install the newest Big Walk update.',
@@ -1331,8 +1501,8 @@ const factPages = [
       'Use a newly generated active code.',
     ],
     'Players have repeatedly fixed apparently valid crossplay codes by correcting an unsynchronized console clock.',
-    'Official FAQ',
-    urls.faq,
+    'Launch-week Switch 2 crossplay troubleshooting thread',
+    urls.crossplay,
   ],
   [
     'help',
@@ -1352,6 +1522,34 @@ const factPages = [
   ],
 ]
 
+const factRelated = {
+  'Technical Help': [
+    ['Crossplay troubleshooting', '/help/crossplay-not-working'],
+    ['Join Code troubleshooting', '/help/join-code-not-working'],
+    ['How host saves work', '/help/save-progress-host'],
+  ],
+  Multiplayer: [
+    ['Multiplayer overview', '/multiplayer/crossplay-player-count'],
+    ['How Join Codes work', '/multiplayer/join-code'],
+    ['Find compatible players', '/find-players'],
+  ],
+  Location: [
+    ['Map and compass guide', '/guides/map-and-compass'],
+    ['Tower progression order', '/guides/tower-order'],
+    ['Browse puzzle locations', '/puzzles'],
+  ],
+  Progression: [
+    ['Beginner route', '/guides/beginner-guide'],
+    ['Recommended tower order', '/guides/tower-order'],
+    ['Map and compass guide', '/guides/map-and-compass'],
+  ],
+  Beginner: [
+    ['Start here: beginner guide', '/guides/beginner-guide'],
+    ['Multiplayer and saves', '/multiplayer/crossplay-player-count'],
+    ['Find a group', '/find-players'],
+  ],
+}
+
 for (const entry of factPages) {
   const [section, slug, title, category, answer, steps, context, sourceLabel, sourceUrl] = entry
   pages.push({
@@ -1359,22 +1557,18 @@ for (const entry of factPages) {
     slug,
     title,
     category,
-    summary: `A direct, source-checked ${title} answer with exact steps, common mistakes and related Big Walk help.`,
+    summary: conciseSummary(answer),
     aliases: [slug.replaceAll('-', ' ')],
     answer,
     steps,
     context,
-    checklist: [
-      'Read the quick answer before changing settings or leaving the area',
-      'Keep the same host when world progress matters',
-      'Match the game version across the group',
-      'Use the related guide for the next step',
-    ],
-    related: [
-      ['Browse all guides', '/guides'],
-      ['Big Walk beginner guide', '/guides/beginner-guide'],
-      ['Find players', '/find-players'],
-    ],
+    related: (
+      factRelated[category] || [
+        ['Browse all guides', '/guides'],
+        ['Big Walk beginner guide', '/guides/beginner-guide'],
+        ['Find players', '/find-players'],
+      ]
+    ).filter(([, href]) => href !== `/${section}/${slug}`),
     sources: [
       [sourceLabel, sourceUrl, 'primary fact and step cross-check'],
       ['Official Big Walk FAQ', urls.faq, 'platform, multiplayer, save and accessibility facts'],
