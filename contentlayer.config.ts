@@ -120,16 +120,19 @@ export const Blog = defineDocumentType(() => ({
     ...computedFields,
     structuredData: {
       type: 'json',
-      resolve: (doc) => ({
-        '@context': 'https://schema.org',
-        '@type': 'Article',
-        headline: doc.title,
-        datePublished: doc.date,
-        dateModified: doc.lastmod || doc.date,
-        description: doc.summary,
-        image: doc.images ? doc.images[0] : siteMetadata.socialBanner,
-        url: `${siteMetadata.siteUrl}/${doc._raw.flattenedPath.replace(/^blog\//, '')}`,
-      }),
+      resolve: (doc) => {
+        const image = doc.images ? doc.images[0] : siteMetadata.socialBanner
+        return {
+          '@context': 'https://schema.org',
+          '@type': 'Article',
+          headline: doc.title,
+          datePublished: doc.date,
+          dateModified: doc.lastmod || doc.date,
+          description: doc.summary,
+          image: image.startsWith('http') ? image : `${siteMetadata.siteUrl}${image}`,
+          url: `${siteMetadata.siteUrl}/${doc._raw.flattenedPath.replace(/^blog\//, '')}/`,
+        }
+      },
     },
   },
 }))
