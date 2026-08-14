@@ -58,6 +58,27 @@ function imageForPage(page, index) {
   return images[index % images.length]
 }
 
+function secondaryImageForPage(page, heroImage, index) {
+  const candidatesByCategory = {
+    Puzzle: [images[2], images[0], images[1], images[4]],
+    Location: [images[4], images[5], images[1], images[3]],
+    Tower: [images[5], images[4], images[3], images[2]],
+    Progression: [images[2], images[4], images[5], images[1]],
+    'Technical Help': [images[1], images[2], images[3], images[7]],
+    Multiplayer: [images[1], images[2], images[7], images[3]],
+    LFG: [images[1], images[0], images[2], images[3]],
+    Item: [images[2], images[0], images[4], images[3]],
+    Achievement: [images[1], images[4], images[5], images[3]],
+    Beginner: [images[0], images[1], images[2], images[4]],
+  }
+  const candidates = candidatesByCategory[page.category] || images
+  for (let offset = 0; offset < candidates.length; offset += 1) {
+    const candidate = candidates[(index + offset) % candidates.length]
+    if (candidate !== heroImage) return candidate
+  }
+  return images.find((image) => image !== heroImage) || heroImage
+}
+
 function imageCaption(page, image) {
   const prefix = `Official Big Walk screenshot showing ${imageDescriptions[image]}.`
   if (page.category === 'Puzzle') {
@@ -152,6 +173,177 @@ There is no mandatory colored-tower order after the opening route.`,
 The Map Room is the large blue building near the starting hub and the bottom of the long red stairs. Its color causes confusion: Blue Tower does not open it. The completed Red Tower key does.
 
 Inside you will find the large progress map, a portable folding map, a compass and laser pointers. The large map is also the fastest way to identify rewards that were solved but never submitted.`,
+  'what-is-big-walk': `## What a normal session actually feels like
+
+One player hosts a persistent world and the others join it. The group explores without a quest arrow, recognizes challenges from physical structures and solves them by describing information, pointing, carrying objects and using communication tools. Progress comes from returning physical rewards to receivers rather than accepting missions from a menu.
+
+It is closer to a cooperative adventure and social puzzle game than a survival game, party minigame collection or walking simulator.
+
+<VideoEmbed
+  id="G0ez7AP4-GM"
+  title="Official Big Walk gameplay overview"
+  caption="House House's official overview shows exploration, proximity communication, gestures and tools without revealing puzzle solutions."
+/>`,
+  'what-to-do-after-ending': `## First ending versus full completion
+
+The first ending confirms that the main route is finished and awards Big Goodbye. Full completion is a separate cleanup goal: check the Map Room for unresolved normal challenges, recover any rewards left on the ground, then work through the seven purple challenges. Keep the original host because the island state belongs to that save.
+
+If the group only wants the authored main journey, it is reasonable to stop at the first ending; Big Game is the completionist target.`,
+  'two-player-coop': `## What changes for a duo
+
+Two-player worlds keep simultaneous requirements completable by two people, but they do not remove the core information splits. Expect one player to observe or hold a control while the other moves, places or reports back. Carry paired walkie-talkies and avoid both players filling their hands with tools before a reward appears.
+
+Extra friends may join later; the 2-player choice controls puzzle configuration, not the lobby maximum.`,
+  'three-player-coop': `## A useful three-player role split
+
+Use one **caller** to translate symbols or numbers, one **runner** to cross distance or operate the remote side, and one **carrier** to protect tools and collect the reward. Rotate those jobs so one person is not permanently left behind.
+
+If one regular player may miss future sessions, a 2-player world is safer. The world choice is the minimum simultaneous group the host can reliably field.`,
+  'four-plus-world': `## When 4+ is the wrong choice
+
+Do not choose 4+ only because many people are present on launch night. Some world elements adapt to the selected minimum, so a later three-person session may not be able to operate every active position. A lower setting still allows a large crowd to join.
+
+For big groups, name subteams by color or destination and make one player responsible for calling everyone back to a fixed landmark.`,
+  'twelve-player-limit': `## Organizing a full lobby
+
+Twelve players fit in one online session, but the world does not create twelve-player-only solutions. Split the party into smaller teams, give each team one destination and one item carrier, and agree on a regroup time. Use Session Details and Moderation Settings if an unexpected player joins.
+
+A password matters more in a public stream because anyone who sees the Join Code can attempt to enter.`,
+  'join-code': `## Where the code appears
+
+Before launch, the code is shown in the corner of the host menu. After the character has loaded into the world, the host can reopen the in-game menu and choose **Session Details**. A new host session generates a new short code, so a screenshot or post from an earlier session may be stale.
+
+Anyone who knows the current code can attempt to join; add a password when the roster should stay private.`,
+  'session-password': `## Change it without ending the session
+
+The host can open **Session Details** while playing and replace the password. This is useful if a code appeared on a stream, an LFG post attracted more people than expected or a former participant should no longer rejoin.
+
+Changing the password protects future entry; use **Session Details → Moderation Settings** to remove or silence someone who is already connected. Never publish the code and password together.`,
+  'steam-friends-invite': `## If the friend session does not appear
+
+Confirm both players are Steam friends, the host has entered the world and neither account is appearing offline. The Mac App Store edition does not use Game Center friend discovery, so it will not populate the same list. In every case, requesting the current Join Code is the fastest fallback.
+
+Cross-platform friends should skip platform-list troubleshooting and use the code from the start.`,
+  'crossplay-pc-ps5': `## What crossplay does—and does not—share
+
+Crossplay lets Windows, Mac and PS5 players occupy the same hosted world. It does not transfer ownership of that world or create cross-progression: the original host still loads the save next time. Use in-game voice or text so proximity, walls and communication tools behave consistently across platforms.
+
+If only the PS5 player fails, also confirm **Mute Game Voice Chat** is off after the connection issue is resolved.`,
+  'crossplay-switch2': `## Distinguish a code problem from a platform problem
+
+First test a newly generated code after the host is visibly in the world. If the code works for PC or PS5 but not Switch 2, synchronize the console clock, restart rather than sleep the console and compare the first two game-version numbers. The third version number may differ.
+
+Mouse mode support on Switch 2 is an input feature; it does not change the crossplay or save rules.`,
+  'lfg-post-template': `## Copyable structure
+
+- **Region/timezone:** EU / UTC+1
+- **Platform:** PS5, crossplay on
+- **Language/chat:** English, in-game voice
+- **World/progress:** 3-player, after Red Tower
+- **Goal:** blind main story, no solution spoilers
+- **Availability:** Saturday 19:00–22:00
+
+Add age or tone preferences only when they matter. Share the temporary Join Code after compatible players reply, not as a permanent part of the listing.`,
+  'choose-a-host': `## Host selection checklist
+
+Choose reliability first, then connection quality. The host must be able to start every continuation session, should run the game at a stable frame rate and should be comfortable keeping the same save through the ending. Record whose world it is before the group disperses.
+
+If two people are equally available, prefer the one with a wired or stable network because every player disconnects when the host stops and poor host performance can contribute to jitter.`,
+  'trophy-lfg': `## Make the save state explicit
+
+State whether the host already has the Map Room, transport towers, first ending or purple route available. A player who joins can earn personal platform achievements, but the session still uses the host's island state. For a one-achievement cleanup, name the exact trigger instead of advertising a vague 100% run.
+
+Before ending the session, wait for every participant to confirm that the achievement notification appeared.`,
+  'red-tower-location': `## What you gain from finding it
+
+Red Tower is the strongest early destination because its completed key opens the Map Room below. That building contains the large progress map plus portable navigation tools, which make every later tower easier to plan. Bring five unsubmitted red rewards or be ready to solve nearby challenges.
+
+If you reach a large blue building first, you are at the future Map Room entrance—not Blue Tower.`,
+  'blue-tower-location': `## Confirm the destination before spending rewards
+
+Look for the tower in relation to the northwest rail network rather than navigating by color alone. Blue Tower releases the key that activates all three trains; the large blue Map Room near Red Tower is a different structure.
+
+After submitting five rewards, keep one named player on key duty and follow every cutter marker downhill toward the main station. A partly shaped key will not start the trains.`,
+  'green-tower-location': `## Useful stops in the same area
+
+The chairlift station beside the tower is where the finished Green key is used. A GPS sits in a red square frame below the tower, making this a particularly valuable navigation trip. Leave a hand, back slot or hip slot open before climbing.
+
+If the chairlift remains still after the tower is complete, retrace the cutter route around the supports; receiving a raw key is only the middle of the unlock sequence.`,
+  'yellow-tower-location': `## Tower and lock are separate landmarks
+
+Yellow Tower accepts five normal red challenge rewards and releases a raw key. The key then follows its own cutter route toward the tunnel mechanism southeast of the tower. Do not return every time to the receiver; follow the directional markers from one cutter to the next.
+
+Take a lantern before entering the underground network and agree on which entrance will be the group's regroup point.`,
+  'black-tower-location': `## Know when you are ready
+
+Treat Black Tower as late-game progression rather than the next colored transport unlock. Open the Map Room and the major travel systems first, then use the central map markers to clean up the rewards required for the Black route. Arriving at the structure early does not bypass those prerequisites.
+
+Once the Black key is complete, keep the group together for the wall and sphere sequence so nobody misses the first-ending trigger.`,
+  'main-train-station': `## How to confirm the railway is active
+
+After the finished Blue key is inserted, station clocks and arriving carriages make the change obvious. Wait for a moving train and board it to trigger Big Ride; standing at a platform is not enough. The unlock applies to the network rather than one colored carriage.
+
+If nothing arrives, verify that five rewards were submitted at Blue Tower and that the key passed through all five cutters.`,
+  'chairlift-station': `## Use the structure as a landmark
+
+The station's large supports are visible from surrounding slopes and make a reliable eastern regroup point. Several Green key cutters sit around those supports, so look above and behind the station before assuming the route has ended.
+
+Once activated, wait for a moving chair, board without jumping away and stay seated long enough for Big Sit to register. The nearby tower and station are separate interaction points.`,
+  'customization-area': `## How painting works
+
+Pick up the brush and have one player apply color to another player's head, torso or legs. The mirror is the easiest way to confirm which body section changed. The target cannot paint themselves, so even a cosmetic visit requires a teammate.
+
+Normal palette colors are available here; the metallic paint associated with Big Makeover belongs to a later Yellow Tunnel route and should not be confused with this opening-area palette.`,
+  'versions-do-not-match': `## Read the number correctly
+
+A version such as **1.4.8** has three parts. Players can connect when the first two match, so 1.4.7 and 1.4.8 are compatible according to the official FAQ; 1.3.x and 1.4.x are not. Compare the number on every title screen instead of assuming automatic updates finished.
+
+If one storefront has not received the matching release yet, wait for rollout rather than repeatedly changing the Join Code.`,
+  'system-clock-connection': `## Why an incorrect clock blocks multiplayer
+
+Online session security depends on timestamps. A device can browse the web normally yet reject hosting and joining when its clock is far from online time. Enable automatic date, time and timezone, force a synchronization and perform a full restart.
+
+If every player has accurate time but only one still fails, move on to version matching and network checks; do not keep regenerating codes as the only test.`,
+  'voice-chat-too-quiet': `## Use the microphone activity meter
+
+Stand face to face, open **Settings → Audio** and confirm the speaker's Microphone Activity moves while they talk. If it does not, check hardware mute, input selection and whether Mute Mode is set to hold. If it moves but sounds faint, raise the device-level input volume and place the microphone closer.
+
+Version 1.4.8 specifically addresses a known quiet-voice issue, but intended distance fading still remains.`,
+  'ps5-microphone': `## The PS5 setting most often missed
+
+Press the PS button, open **Sound** and set **Mute Game Voice Chat** to Off. This is separate from the orange DualSense mute light and can silence the game's chat even while the microphone works elsewhere. Then open Big Walk's Audio settings and watch the activity meter at close range.
+
+Leave console party chat during the test so you know the result is coming from in-game proximity voice.`,
+  'controller-not-detected': `## Separate hardware failure from game configuration
+
+Test the controller outside Big Walk first. If the operating system cannot see an input, repair the cable, Bluetooth pairing or battery before changing Steam settings. If the test works, disconnect other input devices and allow only one remapping layer.
+
+On macOS with an Xbox Wireless Controller, the official FAQ recommends Bluetooth, a Steam-specific controller profile with Increase Compatibility, Steam accessibility/input-monitoring permissions and the default Steam Input profile.`,
+  'rebind-controls': `## Bind the communication actions first
+
+Movement alone is not enough for Big Walk. Test interact, grab, kick, crouch, point, gesture and any push-to-talk or text control before entering a timed puzzle. Keep actions used together on different fingers and resolve duplicate assignments immediately.
+
+Accessibility settings also offer hold/toggle behavior and different crosshairs. If one player cannot perform a required challenge input, the host can enable challenge skipping when creating the session.`,
+  'save-not-loading': `## Identify the correct world
+
+Ask who originally chose **Host Game**, then have that person load their existing slot while everyone else waits at the menu. Once their character appears in the world, the group joins by friend list or the new code. Starting as host on another machine or account may show a different island state.
+
+After loading, check one known tower and the Map Room before repeating puzzles; a carried loose object may reset even when banked progression is intact.`,
+  'change-host-transfer-save': `## Plan for host absence before starting
+
+The official FAQ promises automatic saving for the host and says that same host is needed to continue the journey. It does not document a player-facing host migration or cross-platform world-transfer feature. Choose a host whose schedule is likely to match the group through multiple sessions.
+
+Steam Cloud may protect the host's own PC save, but that is different from giving another participant ownership of the world.`,
+  'game-crash-reconnect': `## Decide how much needs repeating
+
+First inspect the receiver or tower associated with the last completed challenge. If the reward was already submitted, continue from that saved state. If the mechanism reset and the loose reward disappeared, redo only that challenge. Avoid replaying an entire tower route before checking what the host retained.
+
+If the host crashed, everyone will disconnect. Let the host stabilize performance, load first and then distribute the newly generated code.`,
+  'text-chat-restrictions': `## Text participates in game tools
+
+Nearby text behaves like nearby speech, and walkie-talkies extend it when the paired players separate. Soundproof barriers can hide ordinary text just as they block voices. That means a text-only group should still carry communication tools and develop visual signals.
+
+When a message does not appear, move closer or test the relevant in-game device before diagnosing a keyboard failure. An unrestricted external chat will bypass the intended puzzle condition.`,
 }
 
 const urls = {
@@ -193,7 +385,7 @@ function writePage(page, index) {
   const directory = path.join(root, 'data', 'blog', page.section)
   fs.mkdirSync(directory, { recursive: true })
   const image = imageForPage(page, index)
-  const inlineImage = image
+  const inlineImage = secondaryImageForPage(page, image, index)
   const aliases = page.aliases || []
   const tags = page.tags || [page.category.toLowerCase(), 'big-walk']
   const steps = (page.steps || []).map((step, stepIndex) => `${stepIndex + 1}. ${step}`).join('\n')
@@ -734,12 +926,16 @@ const items = [
 
 items.forEach((item, itemIndex) => {
   const [slug, title, location, use, warning] = item
+  const itemName = title
+    .replace(/^Big Walk /, '')
+    .replace(/:.*$/, '')
+    .replace(/ (Locations?|Colors|and)\b.*$/, '')
   pages.push({
     section: 'items',
     slug,
     title,
     category: 'Item',
-    summary: conciseSummary(`Find it ${location}. Use it to ${use}. ${warning}`),
+    summary: `Where to find the ${itemName} in Big Walk, what it does, how to carry it safely and when it helps with navigation, communication or puzzle cleanup.`,
     aliases: [`Big Walk ${slug.replaceAll('-', ' ')}`, title.replace(/^Big Walk /, '')],
     location,
     answer: `Find it ${location}. Its main use is to ${use}.`,
@@ -1572,6 +1768,15 @@ for (const entry of factPages) {
     sources: [
       [sourceLabel, sourceUrl, 'primary fact and step cross-check'],
       ['Official Big Walk FAQ', urls.faq, 'platform, multiplayer, save and accessibility facts'],
+      ...(slug === 'what-is-big-walk'
+        ? [
+            [
+              'Official Big Walk press kit',
+              urls.press,
+              'official gameplay overview and feature list',
+            ],
+          ]
+        : []),
     ],
   })
 }

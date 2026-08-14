@@ -1,7 +1,7 @@
 ---
 title: 'Big Walk Controls, Controller Support and Rebinding'
 date: '2026-08-14'
-lastmod: '2026-08-14'
+lastmod: '2026-08-15'
 summary: 'Keyboard, mouse and controller support, how to rebind controls, and fixes for a controller that Big Walk does not detect.'
 category: 'Technical Help'
 aliases: ['controller not working', 'gamepad', 'keybinds', 'mouse and keyboard']
@@ -36,6 +36,18 @@ The official FAQ records reports involving Xbox Wireless Controllers with Steam 
 ## Accessibility-related controls
 
 Big Walk offers hold/toggle choices, multiple crosshair styles and full rebinding. If a challenge requires an input you cannot perform, the host can enable challenge skipping when starting the session.
+
+## Diagnose the symptom before changing profiles
+
+| Symptom                                    | Most useful first check                               |
+| ------------------------------------------ | ----------------------------------------------------- |
+| No buttons respond                         | Test whether the operating system sees the controller |
+| Two actions fire at once                   | Disable one remapping layer or duplicate device       |
+| Movement works but interact does not       | Restore defaults, then rebind that action             |
+| Controller works outside Steam only        | Enable Steam Input with the default profile           |
+| Mac Xbox controller behaves inconsistently | Use Bluetooth and the macOS compatibility steps above |
+
+After a fix, test grab, point, kick and communication inputs—not only movement—before returning to a puzzle.
 
 ## Sources checked
 

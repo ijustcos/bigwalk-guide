@@ -48,6 +48,11 @@ for (const file of files) {
   if (!body.includes('## Sources checked'))
     errors.push(`${relative}: missing Sources checked section`)
   if (!/<GameImage\b/.test(body)) errors.push(`${relative}: missing a contextual game image`)
+  const heroImage = frontmatter.match(/^images:\s*\[['"]([^'"]+)/m)?.[1]
+  const firstBodyImage = body.match(/<GameImage[\s\S]*?src="([^"]+)"/)?.[1]
+  if (heroImage && heroImage === firstBodyImage) {
+    errors.push(`${relative}: repeats the hero image as the first body image`)
+  }
   if (body.includes(`](${route})`)) errors.push(`${relative}: contains a self-link to ${route}`)
   if (words < 160) errors.push(`${relative}: only ${words} English words`)
   else if (words < 250) warnings.push(`${relative}: thin page at ${words} English words`)
@@ -59,6 +64,12 @@ for (const file of files) {
 
   const summary = frontmatterValue(frontmatter, 'summary')
   if (summary) {
+    const normalizedSummary = summary.replace(/^['"]|['"]$/g, '')
+    if (normalizedSummary.length < 85 || normalizedSummary.length > 190) {
+      errors.push(
+        `${relative}: summary length ${normalizedSummary.length} is outside the 85–190 character target`
+      )
+    }
     const previous = summaries.get(summary)
     if (previous) errors.push(`${relative}: duplicates summary from ${previous}`)
     else summaries.set(summary, relative)
@@ -68,8 +79,7 @@ for (const file of files) {
 console.log(
   `Content audit: ${files.length} articles, ${errors.length} errors, ${warnings.length} warnings`
 )
-for (const warning of warnings.slice(0, 20)) console.log(`WARN ${warning}`)
-if (warnings.length > 20) console.log(`WARN ...and ${warnings.length - 20} more thin pages`)
+for (const warning of warnings) console.log(`WARN ${warning}`)
 for (const error of errors) console.error(`ERROR ${error}`)
 
 if (errors.length) process.exitCode = 1
