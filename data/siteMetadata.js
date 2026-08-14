@@ -7,7 +7,7 @@ const siteMetadata = {
     'Fast answers, spoiler-controlled puzzle solutions, multiplayer help, and fresh groups for Big Walk.',
   language: 'en-us',
   theme: 'system', // system, dark or light
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://bigwalk-guide-pink.vercel.app',
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://bigwalkhub.online',
   siteRepo: 'https://github.com/ijustcos/bigwalk-guide',
   siteLogo: `${process.env.BASE_PATH || ''}/static/images/logo.png`,
   socialBanner: `${process.env.BASE_PATH || ''}/static/images/big-walk/social-card.jpg`,
