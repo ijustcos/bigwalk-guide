@@ -2899,6 +2899,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@next/third-parties@npm:15.5.12":
+  version: 15.5.12
+  resolution: "@next/third-parties@npm:15.5.12"
+  dependencies:
+    third-party-capital: 1.0.20
+  peerDependencies:
+    next: ^13.0.0 || ^14.0.0 || ^15.0.0
+    react: ^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0
+  checksum: c9b1b3f3934c163367d08fb44a2ad037bf4694b5b9a358a37f624f78b72fc9bc7490d333f98645ce05551ee8a86fe2d7d4e5b644ad154a769c2d23382f3ede24
+  languageName: node
+  linkType: hard
+
 "@nodelib/fs.scandir@npm:2.1.5":
   version: 2.1.5
   resolution: "@nodelib/fs.scandir@npm:2.1.5"
@@ -4657,6 +4669,7 @@ __metadata:
     "@headlessui/react": 2.2.9
     "@neondatabase/serverless": ^1.1.0
     "@next/bundle-analyzer": 15.5.12
+    "@next/third-parties": 15.5.12
     "@svgr/webpack": ^8.1.0
     "@tailwindcss/forms": ^0.5.11
     "@tailwindcss/postcss": ^4.1.18
@@ -11684,6 +11697,13 @@ __metadata:
   peerDependencies:
     tslib: ^2
   checksum: e73e4bc96aefc41e4f1fdd1cf65eb988c9837f3b5fcd8a472ee30d91c2f7fa9b144562d6b4c5dade6ce70bc5865caf3e869f6d2975cce064b1d81dac3ece3508
+  languageName: node
+  linkType: hard
+
+"third-party-capital@npm:1.0.20":
+  version: 1.0.20
+  resolution: "third-party-capital@npm:1.0.20"
+  checksum: ef5eae00bdb82b538b9f628a011fc294cd6f4bafdbb46d88f3d1a72e8c3b9e2cc2a547fdb62bc16bdd847e9da3dac2df676b154c64914f6c90ea15aac6ce0a6a
   languageName: node
   linkType: hard
 

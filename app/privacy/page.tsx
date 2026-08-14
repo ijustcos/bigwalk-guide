@@ -22,16 +22,17 @@ export default function Page() {
       </p>
       <h2>Analytics and security</h2>
       <p>
-        The site may use privacy-conscious traffic analytics and Cloudflare Turnstile to prevent
-        automated abuse. These providers may process limited technical data according to their own
-        policies.
+        The site uses Google Analytics to understand traffic and Cloudflare Turnstile to prevent
+        automated abuse. These providers may process limited technical data, including browser and
+        device information, referring pages, approximate location and site interactions, according
+        to their own policies.
       </p>
       <h2>Removal</h2>
       <p>
         Use the private management link to remove your listing, or report a listing that exposes
         personal information. Moderators can hide or delete content.
       </p>
-      <p>Last updated: August 13, 2026.</p>
+      <p>Last updated: August 14, 2026.</p>
     </article>
   )
 }

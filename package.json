@@ -15,6 +15,7 @@
     "@headlessui/react": "2.2.9",
     "@neondatabase/serverless": "^1.1.0",
     "@next/bundle-analyzer": "15.5.12",
+    "@next/third-parties": "15.5.12",
     "@tailwindcss/forms": "^0.5.11",
     "@tailwindcss/postcss": "^4.1.18",
     "@tailwindcss/typography": "^0.5.19",
