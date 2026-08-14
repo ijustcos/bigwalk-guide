@@ -25,11 +25,11 @@ export default function ManagePost({ id, token }: { id: string; token: string })
   return (
     <div className="mx-auto max-w-xl py-16">
       <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-        <span className="text-xs font-black tracking-[0.18em] text-[#1f6b5b] uppercase">
+        <span className="text-xs font-black tracking-[0.18em] text-[#1f6b5b] uppercase dark:text-emerald-300">
           Private management link
         </span>
         <h1 className="mt-3 text-3xl font-black">Manage your group</h1>
-        <p className="mt-3 leading-7 text-slate-500">{message}</p>
+        <p className="mt-3 leading-7 text-slate-500 dark:text-slate-400">{message}</p>
         <div className="mt-8 grid gap-3">
           <button
             disabled={busy}

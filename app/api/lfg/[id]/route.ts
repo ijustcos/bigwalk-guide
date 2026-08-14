@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { hashValue, reportSchema } from '@/lib/lfg'
+import { getClientIp, hashValue, publicSourceHash, reportSchema } from '@/lib/lfg'
 import { getDb } from '@/lib/neon'
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -34,12 +34,25 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   const parsed = reportSchema.safeParse(await request.json())
   if (!parsed.success) return NextResponse.json({ error: 'Choose a reason.' }, { status: 400 })
   const { id } = await params
+  const sourceHash = publicSourceHash(getClientIp(request))
+  const [{ recent_count: recentCount }] = await sql`
+    select count(*)::integer as recent_count
+    from lfg_reports
+    where source_hash = ${sourceHash}
+      and created_at > now() - interval '1 hour'
+  `
+  if (Number(recentCount) >= 10)
+    return NextResponse.json(
+      { error: 'Too many reports. Please try again later.' },
+      { status: 429 }
+    )
   const updated = await sql`
     with target as (
       select id from lfg_posts where id::text = ${id}
     ), report as (
-      insert into lfg_reports (post_id, reason)
-      select id, ${parsed.data.reason} from target
+      insert into lfg_reports (post_id, reason, source_hash)
+      select id, ${parsed.data.reason}, ${sourceHash} from target
+      on conflict do nothing
       returning post_id
     )
     update lfg_posts
@@ -49,6 +62,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     where id in (select post_id from report)
     returning id
   `
-  if (!updated.length) return NextResponse.json({ error: 'Post not found.' }, { status: 404 })
+  if (!updated.length) {
+    const [post] = await sql`select id from lfg_posts where id::text = ${id} limit 1`
+    if (!post) return NextResponse.json({ error: 'Post not found.' }, { status: 404 })
+    return NextResponse.json({ error: 'You already reported this post.' }, { status: 409 })
+  }
   return NextResponse.json({ ok: true })
 }

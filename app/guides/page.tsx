@@ -81,14 +81,14 @@ export default function GuidesPage() {
         >
           <div className="mb-6 flex items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-bold tracking-[0.18em] text-[#1f6b5b] uppercase">
+              <p className="text-xs font-bold tracking-[0.18em] text-[#1f6b5b] uppercase dark:text-emerald-300">
                 Browse by need
               </p>
               <h2 className="mt-1 text-2xl font-black tracking-tight sm:text-3xl">{group.label}</h2>
             </div>
             <Link
               href={`/topics/${group.slug}`}
-              className="inline-flex items-center gap-1 text-sm font-bold text-[#1f6b5b]"
+              className="inline-flex items-center gap-1 text-sm font-bold text-[#1f6b5b] dark:text-emerald-300"
             >
               All {group.posts.length} <ArrowRight size={15} />
             </Link>
@@ -116,7 +116,7 @@ export default function GuidesPage() {
                   <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
                     {post.summary}
                   </p>
-                  <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#1f6b5b]">
+                  <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#1f6b5b] dark:text-emerald-300">
                     Read answer <ArrowRight size={14} />
                   </span>
                 </div>

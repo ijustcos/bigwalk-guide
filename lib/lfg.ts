@@ -53,23 +53,61 @@ export function hashValue(value: string) {
   return createHash('sha256').update(value).digest('hex')
 }
 export function publicSourceHash(ip: string) {
-  return hashValue(`${process.env.SOURCE_HASH_SALT || 'dev-salt'}:${ip}`)
+  const salt = process.env.SOURCE_HASH_SALT
+  if (!salt && process.env.NODE_ENV === 'production') {
+    throw new Error('SOURCE_HASH_SALT is required in production.')
+  }
+  return hashValue(`${salt || 'local-development-only'}:${ip}`)
 }
 
-export async function verifyTurnstile(token: string | undefined, ip: string) {
+export function getClientIp(request: Request) {
+  return (
+    request.headers.get('cf-connecting-ip') ||
+    request.headers.get('x-real-ip') ||
+    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    'unknown'
+  )
+}
+
+export async function verifyTurnstile(
+  token: string | undefined,
+  ip: string,
+  expectedAction: string
+) {
   const secret = process.env.TURNSTILE_SECRET_KEY
-  if (!secret) return true
+  if (!secret) return process.env.NODE_ENV !== 'production'
   if (!token) return false
-  const form = new FormData()
-  form.append('secret', secret)
-  form.append('response', token)
-  form.append('remoteip', ip)
-  const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-    method: 'POST',
-    body: form,
-  })
-  const result = (await response.json()) as { success?: boolean }
-  return result.success === true
+  try {
+    const form = new FormData()
+    form.append('secret', secret)
+    form.append('response', token)
+    form.append('remoteip', ip)
+    const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      body: form,
+      signal: AbortSignal.timeout(10_000),
+    })
+    if (!response.ok) return false
+    const result = (await response.json()) as {
+      success?: boolean
+      action?: string
+      hostname?: string
+    }
+    const allowedHostnames = (
+      process.env.TURNSTILE_HOSTNAMES || 'bigwalkhub.online,www.bigwalkhub.online'
+    )
+      .split(',')
+      .map((hostname) => hostname.trim())
+      .filter(Boolean)
+    return (
+      result.success === true &&
+      result.action === expectedAction &&
+      Boolean(result.hostname && allowedHostnames.includes(result.hostname))
+    )
+  } catch (error) {
+    console.error('Turnstile verification failed', error)
+    return false
+  }
 }
 
 export type PublicLfgPost = {

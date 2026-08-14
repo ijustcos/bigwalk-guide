@@ -30,8 +30,25 @@ create table if not exists lfg_reports (
   id bigint generated always as identity primary key,
   post_id uuid not null references lfg_posts(id) on delete cascade,
   reason text not null,
+  source_hash text,
   created_at timestamptz not null default now()
 );
+
+create unique index if not exists lfg_reports_source_unique_idx
+  on lfg_reports (post_id, source_hash)
+  where source_hash is not null;
+
+create index if not exists lfg_reports_source_created_idx
+  on lfg_reports (source_hash, created_at desc);
+
+create table if not exists admin_login_attempts (
+  id bigint generated always as identity primary key,
+  source_hash text not null,
+  attempted_at timestamptz not null default now()
+);
+
+create index if not exists admin_login_attempts_source_idx
+  on admin_login_attempts (source_hash, attempted_at desc);
 
 create table if not exists admin_actions (
   id bigint generated always as identity primary key,

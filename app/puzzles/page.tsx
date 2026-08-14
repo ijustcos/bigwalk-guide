@@ -15,7 +15,7 @@ export default function PuzzlesPage() {
   return (
     <div className="pt-10 pb-12">
       <div className="max-w-3xl">
-        <span className="inline-flex items-center gap-2 rounded-full bg-[#dbeadf] px-3 py-1 text-xs font-bold tracking-wider text-[#1f6b5b] uppercase">
+        <span className="inline-flex items-center gap-2 rounded-full bg-[#dbeadf] px-3 py-1 text-xs font-bold tracking-wider text-[#1f6b5b] uppercase dark:bg-emerald-950 dark:text-emerald-300">
           <Search size={14} /> Visual puzzle finder
         </span>
         <h1 className="mt-5 text-4xl font-black tracking-[-0.04em] sm:text-6xl">
@@ -51,7 +51,7 @@ export default function PuzzlesPage() {
               <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
                 {post.summary}
               </p>
-              <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#1f6b5b]">
+              <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#1f6b5b] dark:text-emerald-300">
                 Hints and solution <ArrowRight size={14} />
               </span>
             </div>

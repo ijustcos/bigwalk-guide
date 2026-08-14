@@ -14,7 +14,7 @@ const Header = () => {
 
   return (
     <header className={headerClass}>
-      <Link href="/" aria-label={siteMetadata.headerTitle}>
+      <Link href="/" aria-label={`BW - ${siteMetadata.headerTitle}`}>
         <div className="flex items-center gap-3">
           <span className="grid h-10 w-10 place-items-center rounded-2xl bg-[#153f38] text-lg font-black text-[#f5c24d] shadow-sm">
             BW

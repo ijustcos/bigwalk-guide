@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react'
 import type { PublicLfgPost } from '@/lib/lfg'
 import { Eye, EyeOff, LogOut, RefreshCw, Search, Trash2 } from 'lucide-react'
+import TurnstileWidget from './TurnstileWidget'
 
 export default function AdminLfg({ authenticated }: { authenticated: boolean }) {
   const [loggedIn, setLoggedIn] = useState(authenticated)
@@ -10,6 +11,9 @@ export default function AdminLfg({ authenticated }: { authenticated: boolean }) 
   const [query, setQuery] = useState('')
   const [status, setStatus] = useState('All')
   const [message, setMessage] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [turnstileToken, setTurnstileToken] = useState('')
+  const [turnstileReset, setTurnstileReset] = useState(0)
   async function load() {
     const response = await fetch('/api/admin/lfg', { cache: 'no-store' })
     if (response.ok) {
@@ -22,14 +26,23 @@ export default function AdminLfg({ authenticated }: { authenticated: boolean }) 
   }, [loggedIn])
   async function login(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    setSubmitting(true)
+    setMessage('')
     const password = String(new FormData(event.currentTarget).get('password') || '')
-    const response = await fetch('/api/admin/session', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ password }),
-    })
-    if (response.ok) setLoggedIn(true)
-    else setMessage('Incorrect administrator password.')
+    try {
+      const response = await fetch('/api/admin/session', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ password, turnstileToken }),
+      })
+      const data = await response.json()
+      if (response.ok) setLoggedIn(true)
+      else setMessage(data.error || 'Unable to sign in.')
+    } finally {
+      setSubmitting(false)
+      setTurnstileToken('')
+      setTurnstileReset((value) => value + 1)
+    }
   }
   async function action(id: string, value: string) {
     await fetch('/api/admin/lfg', {
@@ -57,19 +70,31 @@ export default function AdminLfg({ authenticated }: { authenticated: boolean }) 
           onSubmit={login}
           className="rounded-3xl border border-slate-200 bg-white p-8 shadow-lg dark:border-slate-800 dark:bg-slate-900"
         >
-          <div className="text-xs font-black tracking-[0.18em] text-[#1f6b5b] uppercase">
+          <div className="text-xs font-black tracking-[0.18em] text-[#1f6b5b] uppercase dark:text-emerald-300">
             Private area
           </div>
           <h1 className="mt-3 text-3xl font-black">Administrator</h1>
-          <p className="mt-2 text-sm text-slate-500">Enter the private administrator password.</p>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+            Enter the private administrator password.
+          </p>
           <input
             type="password"
             name="password"
             required
             className="mt-6 w-full rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-950"
           />
-          <button className="mt-3 w-full rounded-xl bg-[#153f38] px-5 py-3 font-bold text-white">
-            Sign in
+          <div className="mt-4">
+            <TurnstileWidget
+              action="admin_login"
+              onToken={setTurnstileToken}
+              resetSignal={turnstileReset}
+            />
+          </div>
+          <button
+            disabled={submitting || !process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || !turnstileToken}
+            className="mt-3 w-full rounded-xl bg-[#153f38] px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {submitting ? 'Signing in…' : 'Sign in'}
           </button>
           {message && <p className="mt-3 text-sm text-red-600">{message}</p>}
         </form>
@@ -79,11 +104,11 @@ export default function AdminLfg({ authenticated }: { authenticated: boolean }) 
     <div className="py-10">
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <div className="text-xs font-black tracking-[0.18em] text-[#1f6b5b] uppercase">
+          <div className="text-xs font-black tracking-[0.18em] text-[#1f6b5b] uppercase dark:text-emerald-300">
             Moderation
           </div>
           <h1 className="mt-2 text-4xl font-black">Find Players admin</h1>
-          <p className="mt-2 text-slate-500">
+          <p className="mt-2 text-slate-500 dark:text-slate-400">
             {posts.length} total listings · {posts.filter((p) => p.status === 'Active').length}{' '}
             active · {posts.filter((p) => (p.reportCount || 0) > 0).length} reported
           </p>
@@ -93,7 +118,7 @@ export default function AdminLfg({ authenticated }: { authenticated: boolean }) 
             await fetch('/api/admin/session', { method: 'DELETE' })
             setLoggedIn(false)
           }}
-          className="inline-flex items-center gap-2 text-sm font-bold text-slate-500"
+          className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 dark:text-slate-300"
         >
           <LogOut size={17} /> Sign out
         </button>
@@ -126,7 +151,7 @@ export default function AdminLfg({ authenticated }: { authenticated: boolean }) 
       </div>
       <div className="mt-5 overflow-x-auto rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
         <table className="w-full min-w-[900px] text-left text-sm">
-          <thead className="bg-slate-100 text-xs tracking-wider text-slate-500 uppercase dark:bg-slate-800">
+          <thead className="bg-slate-100 text-xs tracking-wider text-slate-500 uppercase dark:bg-slate-800 dark:text-slate-300">
             <tr>
               {[
                 'Status',
@@ -155,7 +180,7 @@ export default function AdminLfg({ authenticated }: { authenticated: boolean }) 
                 <td className="max-w-xs px-4 py-3">{post.goal}</td>
                 <td className="px-4 py-3 font-mono">{post.joinCode || '—'}</td>
                 <td className="px-4 py-3">{post.reportCount || 0}</td>
-                <td className="px-4 py-3 text-slate-500">
+                <td className="px-4 py-3 text-slate-500 dark:text-slate-400">
                   {new Date(post.createdAt).toLocaleString()}
                 </td>
                 <td className="px-4 py-3">
@@ -191,7 +216,9 @@ export default function AdminLfg({ authenticated }: { authenticated: boolean }) 
           </tbody>
         </table>
         {filtered.length === 0 && (
-          <div className="p-10 text-center text-slate-500">No matching posts.</div>
+          <div className="p-10 text-center text-slate-500 dark:text-slate-400">
+            No matching posts.
+          </div>
         )}
       </div>
     </div>

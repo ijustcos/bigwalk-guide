@@ -1,5 +1,5 @@
 import { defineDocumentType, ComputedFields, makeSource } from 'contentlayer2/source-files'
-import { writeFileSync } from 'fs'
+import { existsSync, readFileSync, writeFileSync } from 'fs'
 import readingTime from 'reading-time'
 import { slug } from 'github-slugger'
 import path from 'path'
@@ -28,6 +28,11 @@ import prettier from 'prettier'
 
 const root = process.cwd()
 const isProduction = process.env.NODE_ENV === 'production'
+
+function writeFileIfChanged(filePath: string, content: string) {
+  if (existsSync(filePath) && readFileSync(filePath, 'utf8') === content) return
+  writeFileSync(filePath, content)
+}
 
 // heroicon mini link
 const icon = fromHtmlIsomorphic(
@@ -76,8 +81,13 @@ async function createTagCount(allBlogs) {
       })
     }
   })
-  const formatted = await prettier.format(JSON.stringify(tagCount, null, 2), { parser: 'json' })
-  writeFileSync('./app/tag-data.json', formatted)
+  const sortedTagCount = Object.fromEntries(
+    Object.entries(tagCount).sort(([left], [right]) => left.localeCompare(right))
+  )
+  const formatted = await prettier.format(JSON.stringify(sortedTagCount, null, 2), {
+    parser: 'json',
+  })
+  writeFileIfChanged('./app/tag-data.json', formatted)
 }
 
 function createSearchIndex(allBlogs) {
@@ -85,7 +95,7 @@ function createSearchIndex(allBlogs) {
     siteMetadata?.search?.provider === 'kbar' &&
     siteMetadata.search.kbarConfig.searchDocumentsPath
   ) {
-    writeFileSync(
+    writeFileIfChanged(
       `public/${path.basename(siteMetadata.search.kbarConfig.searchDocumentsPath)}`,
       JSON.stringify(allCoreContent(sortPosts(allBlogs)))
     )
@@ -125,12 +135,34 @@ export const Blog = defineDocumentType(() => ({
         return {
           '@context': 'https://schema.org',
           '@type': 'Article',
+          '@id': `${siteMetadata.siteUrl}/${doc._raw.flattenedPath.replace(/^blog\//, '')}/#article`,
           headline: doc.title,
           datePublished: doc.date,
           dateModified: doc.lastmod || doc.date,
           description: doc.summary,
           image: image.startsWith('http') ? image : `${siteMetadata.siteUrl}${image}`,
           url: `${siteMetadata.siteUrl}/${doc._raw.flattenedPath.replace(/^blog\//, '')}/`,
+          mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': `${siteMetadata.siteUrl}/${doc._raw.flattenedPath.replace(/^blog\//, '')}/`,
+          },
+          author: {
+            '@type': 'Organization',
+            '@id': `${siteMetadata.siteUrl}/#organization`,
+            name: 'Big Walk Field Guide',
+            url: `${siteMetadata.siteUrl}/`,
+          },
+          publisher: {
+            '@type': 'Organization',
+            '@id': `${siteMetadata.siteUrl}/#organization`,
+            name: 'Big Walk Field Guide',
+            url: `${siteMetadata.siteUrl}/`,
+            logo: {
+              '@type': 'ImageObject',
+              url: `${siteMetadata.siteUrl}/static/images/logo.png`,
+            },
+          },
+          inLanguage: 'en-US',
         }
       },
     },

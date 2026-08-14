@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import {
   createManageToken,
+  getClientIp,
   hashValue,
   lfgPostSchema,
   mapPost,
@@ -46,11 +47,8 @@ export async function POST(request: NextRequest) {
     )
   if (/https?:\/\/|discord\.gg|@everyone/i.test(parsed.data.message))
     return NextResponse.json({ error: 'Links are not allowed in posts.' }, { status: 400 })
-  const ip =
-    request.headers.get('cf-connecting-ip') ||
-    request.headers.get('x-forwarded-for')?.split(',')[0] ||
-    'unknown'
-  if (!(await verifyTurnstile(parsed.data.turnstileToken, ip)))
+  const ip = getClientIp(request)
+  if (!(await verifyTurnstile(parsed.data.turnstileToken, ip, 'lfg_post')))
     return NextResponse.json({ error: 'Please complete the security check.' }, { status: 400 })
   const sourceHash = publicSourceHash(ip)
   try {
@@ -64,6 +62,18 @@ export async function POST(request: NextRequest) {
     if (Number(activeCount) >= 3)
       return NextResponse.json(
         { error: 'You already have the maximum number of active posts.' },
+        { status: 429 }
+      )
+
+    const [{ recent_count: recentCount }] = await sql`
+      select count(*)::integer as recent_count
+      from lfg_posts
+      where source_hash = ${sourceHash}
+        and created_at > now() - interval '1 hour'
+    `
+    if (Number(recentCount) >= 5)
+      return NextResponse.json(
+        { error: 'Too many posts from this connection. Please try again later.' },
         { status: 429 }
       )
 

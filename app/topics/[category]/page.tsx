@@ -27,7 +27,10 @@ export default async function TopicPage({ params }: { params: Promise<{ category
 
   return (
     <div className="pt-10 pb-14">
-      <nav className="mb-6 text-sm font-semibold text-slate-500" aria-label="Breadcrumb">
+      <nav
+        className="mb-6 text-sm font-semibold text-slate-500 dark:text-slate-300"
+        aria-label="Breadcrumb"
+      >
         <Link href="/guides">All guides</Link> <span className="mx-2">/</span> {category.label}
       </nav>
       <header className="relative overflow-hidden rounded-3xl bg-[#153f38] px-6 py-12 text-white sm:px-10">
@@ -71,7 +74,7 @@ export default async function TopicPage({ params }: { params: Promise<{ category
               <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-500 dark:text-slate-400">
                 {post.summary}
               </p>
-              <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#1f6b5b]">
+              <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#1f6b5b] dark:text-emerald-300">
                 Read answer <ArrowRight size={14} />
               </span>
             </div>

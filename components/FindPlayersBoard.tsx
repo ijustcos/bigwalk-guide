@@ -125,6 +125,7 @@ export default function FindPlayersBoard() {
   const [message, setMessage] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [turnstileToken, setTurnstileToken] = useState('')
+  const [turnstileReset, setTurnstileReset] = useState(0)
   const [revealed, setRevealed] = useState<string[]>([])
 
   const load = useCallback(async () => {
@@ -180,17 +181,20 @@ export default function FindPlayersBoard() {
       setMessage(error instanceof Error ? error.message : 'Unable to publish.')
     } finally {
       setSubmitting(false)
+      setTurnstileToken('')
+      setTurnstileReset((value) => value + 1)
     }
   }
 
   async function report(id: string) {
     if (id.startsWith('sample-') || !confirm('Report this listing as invalid or expired?')) return
-    await fetch(`/api/lfg/${id}`, {
+    const response = await fetch(`/api/lfg/${id}`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ reason: 'Invalid or expired code' }),
     })
-    setMessage('Report received. Thank you.')
+    const data = await response.json()
+    setMessage(response.ok ? 'Report received. Thank you.' : data.error || 'Unable to report.')
   }
 
   return (
@@ -209,7 +213,7 @@ export default function FindPlayersBoard() {
         ].map(([label, value, setter, options]) => (
           <label
             key={label as string}
-            className="min-w-0 flex-1 text-xs font-bold tracking-wider text-slate-500 uppercase"
+            className="min-w-0 flex-1 text-xs font-bold tracking-wider text-slate-500 uppercase dark:text-slate-300"
           >
             {label as string}
             <select
@@ -235,12 +239,12 @@ export default function FindPlayersBoard() {
       <section className="mt-8">
         <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
           <div>
-            <p className="text-xs font-bold tracking-[0.16em] text-[#1f6b5b] uppercase">
+            <p className="text-xs font-bold tracking-[0.16em] text-[#1f6b5b] uppercase dark:text-emerald-300">
               Fresh community leads
             </p>
             <h2 className="mt-1 text-2xl font-black">Recent public LFG examples</h2>
           </div>
-          <p className="max-w-md text-xs leading-5 text-slate-500 sm:text-right">
+          <p className="max-w-md text-xs leading-5 text-slate-500 sm:text-right dark:text-slate-400">
             Curated from the August 13 community thread and paraphrased for privacy. Open the source
             to find current replies; we do not copy usernames, private details or expiring codes.
           </p>
@@ -268,7 +272,7 @@ export default function FindPlayersBoard() {
                   </span>
                 ))}
               </div>
-              <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#1f6b5b]">
+              <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#1f6b5b] dark:text-emerald-300">
                 View original request <ExternalLink size={13} />
               </span>
             </a>
@@ -277,13 +281,13 @@ export default function FindPlayersBoard() {
       </section>
 
       <div className="mt-6 flex items-center justify-between">
-        <div className="flex items-center gap-2 text-sm font-semibold text-slate-500">
+        <div className="flex items-center gap-2 text-sm font-semibold text-slate-500 dark:text-slate-300">
           <Filter size={16} /> {filtered.length} active groups
         </div>
         <button
           type="button"
           onClick={load}
-          className="grid h-11 w-11 place-items-center rounded-full text-slate-500 transition hover:bg-white dark:hover:bg-slate-800"
+          className="grid h-11 w-11 place-items-center rounded-full text-slate-500 transition hover:bg-white dark:text-slate-300 dark:hover:bg-slate-800"
           aria-label="Refresh"
         >
           <RefreshCw size={17} className={loading ? 'animate-spin' : ''} />
@@ -376,7 +380,7 @@ export default function FindPlayersBoard() {
         })}
       </div>
       {!loading && filtered.length === 0 && (
-        <div className="mt-6 rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
+        <div className="mt-6 rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500 dark:border-slate-700 dark:text-slate-400">
           No matching groups right now. Post one or try a broader filter.
         </div>
       )}
@@ -394,7 +398,7 @@ export default function FindPlayersBoard() {
             <div className="sticky top-0 z-10 flex items-center justify-between gap-4 rounded-t-3xl border-b border-slate-200 bg-[#f7f4ea]/95 px-5 py-5 shadow-sm backdrop-blur sm:px-8 dark:border-slate-800 dark:bg-slate-950/95">
               <div>
                 <DialogTitle className="text-2xl font-black">Post a group</DialogTitle>
-                <p className="mt-1 text-sm text-slate-500">
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                   No account required. Posts expire automatically.
                 </p>
               </div>
@@ -505,7 +509,11 @@ export default function FindPlayersBoard() {
                 <input name="message" maxLength={160} className={fieldClass} />
               </label>
               <div className="sm:col-span-2">
-                <TurnstileWidget onToken={setTurnstileToken} />
+                <TurnstileWidget
+                  action="lfg_post"
+                  onToken={setTurnstileToken}
+                  resetSignal={turnstileReset}
+                />
               </div>
               {message && (
                 <div
@@ -514,12 +522,17 @@ export default function FindPlayersBoard() {
                   {message}
                 </div>
               )}
-              <label className="flex gap-2 text-xs leading-5 text-slate-500 sm:col-span-2">
+              <label className="flex gap-2 text-xs leading-5 text-slate-500 sm:col-span-2 dark:text-slate-400">
                 <input type="checkbox" required className="mt-1 rounded" />I will not share personal
                 information, links or abusive content.
               </label>
               <button
-                disabled={submitting || !configured}
+                disabled={
+                  submitting ||
+                  !configured ||
+                  !process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ||
+                  !turnstileToken
+                }
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#153f38] px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50 sm:col-span-2"
               >
                 {submitting ? (

@@ -150,19 +150,25 @@ export default function Home() {
 
       <section className="grid grid-cols-3 divide-x divide-slate-200 border-b border-slate-200 py-7 text-center dark:divide-slate-800 dark:border-slate-800">
         <div>
-          <div className="text-2xl font-black text-[#1f6b5b] sm:text-3xl">{answerCount}</div>
+          <div className="text-2xl font-black text-[#1f6b5b] sm:text-3xl dark:text-emerald-300">
+            {answerCount}
+          </div>
           <div className="mt-1 text-[10px] font-bold tracking-wider text-slate-500 uppercase sm:text-xs">
             useful answers
           </div>
         </div>
         <div>
-          <div className="text-2xl font-black text-[#1f6b5b] sm:text-3xl">{puzzleCount}</div>
+          <div className="text-2xl font-black text-[#1f6b5b] sm:text-3xl dark:text-emerald-300">
+            {puzzleCount}
+          </div>
           <div className="mt-1 text-[10px] font-bold tracking-wider text-slate-500 uppercase sm:text-xs">
             puzzle pages
           </div>
         </div>
         <div>
-          <div className="text-2xl font-black text-[#1f6b5b] sm:text-3xl">9</div>
+          <div className="text-2xl font-black text-[#1f6b5b] sm:text-3xl dark:text-emerald-300">
+            9
+          </div>
           <div className="mt-1 text-[10px] font-bold tracking-wider text-slate-500 uppercase sm:text-xs">
             guide categories
           </div>
@@ -172,14 +178,14 @@ export default function Home() {
       <section className="py-14">
         <div className="mb-7 flex items-end justify-between gap-6">
           <div>
-            <p className="text-xs font-bold tracking-[0.2em] text-[#1f6b5b] uppercase">
+            <p className="text-xs font-bold tracking-[0.2em] text-[#1f6b5b] uppercase dark:text-emerald-300">
               Start with what you see
             </p>
             <h2 className="mt-2 text-3xl font-black tracking-tight">Which puzzle is this?</h2>
           </div>
           <Link
             href="/puzzles"
-            className="hidden items-center gap-1 text-sm font-bold text-[#1f6b5b] sm:flex"
+            className="hidden items-center gap-1 text-sm font-bold text-[#1f6b5b] sm:flex dark:text-emerald-300"
           >
             All puzzles <ArrowRight size={16} />
           </Link>
@@ -215,7 +221,7 @@ export default function Home() {
       <section className="border-y border-slate-200 py-14 dark:border-slate-800">
         <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
           <div className="lg:sticky lg:top-6">
-            <p className="text-xs font-bold tracking-[0.2em] text-[#1f6b5b] uppercase">
+            <p className="text-xs font-bold tracking-[0.2em] text-[#1f6b5b] uppercase dark:text-emerald-300">
               Popular now
             </p>
             <h2 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">
@@ -233,7 +239,7 @@ export default function Home() {
                 key={guide.href}
                 className="group rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-0.5 hover:border-emerald-700/30 hover:shadow-md dark:border-slate-800 dark:bg-slate-900"
               >
-                <span className="text-xs font-black tracking-[0.16em] text-[#1f6b5b]">
+                <span className="text-xs font-black tracking-[0.16em] text-[#1f6b5b] dark:text-emerald-300">
                   0{index + 1}
                 </span>
                 <h3 className="mt-3 font-black group-hover:text-[#1f6b5b]">{guide.title}</h3>
@@ -313,7 +319,7 @@ export default function Home() {
             key={href}
             className="group flex gap-4 rounded-2xl border border-transparent p-5 transition hover:border-slate-200 hover:bg-white dark:hover:border-slate-800 dark:hover:bg-slate-900"
           >
-            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[#dbeadf] text-[#1f6b5b] dark:bg-emerald-950">
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[#dbeadf] text-[#1f6b5b] dark:bg-emerald-950 dark:text-emerald-300">
               <Icon size={21} />
             </span>
             <span>
@@ -329,7 +335,7 @@ export default function Home() {
       <section className="mt-14 overflow-hidden rounded-3xl border border-[#153f38]/10 bg-[#e4efe5] p-7 sm:p-10 dark:bg-emerald-950/40">
         <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
           <div>
-            <div className="flex gap-3 text-[#1f6b5b]">
+            <div className="flex gap-3 text-[#1f6b5b] dark:text-emerald-300">
               <Radio />
               <Map />
             </div>

@@ -16,7 +16,7 @@ export default function GameImage({ src, alt, caption, priority = false }: GameI
           alt={alt}
           fill
           priority={priority}
-          sizes="(max-width: 896px) 100vw, 896px"
+          sizes="(max-width: 896px) calc(100vw - 32px), 896px"
           className="object-cover"
         />
       </div>

@@ -33,7 +33,7 @@ export default function GuideLayout({
   return (
     <article className="mx-auto max-w-4xl pt-9 pb-12">
       <nav
-        className="mb-6 flex items-center gap-2 text-sm font-semibold text-slate-500"
+        className="mb-6 flex items-center gap-2 text-sm font-semibold text-slate-500 dark:text-slate-300"
         aria-label="Breadcrumb"
       >
         <Link href="/">Home</Link>
@@ -52,11 +52,11 @@ export default function GuideLayout({
       </nav>
       <header>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-full bg-[#dbeadf] px-3 py-1 text-xs font-bold tracking-wider text-[#1f6b5b] uppercase dark:bg-emerald-950">
+          <span className="rounded-full bg-[#dbeadf] px-3 py-1 text-xs font-bold tracking-wider text-[#1f6b5b] uppercase dark:bg-emerald-950 dark:text-emerald-300">
             {category}
           </span>
           {verified && (
-            <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500">
+            <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 dark:text-slate-300">
               <CheckCircle2 size={14} /> Source checked
             </span>
           )}
@@ -90,7 +90,7 @@ export default function GuideLayout({
           </span>
         </div>
         {aliases && aliases.length > 0 && (
-          <div className="mt-5 text-sm text-slate-500">
+          <div className="mt-5 text-sm text-slate-500 dark:text-slate-400">
             <strong className="text-slate-700 dark:text-slate-200">Players also call this:</strong>{' '}
             {aliases.join(', ')}
           </div>
@@ -106,7 +106,7 @@ export default function GuideLayout({
       )}
       {quickAnswer && (
         <aside className="my-8 rounded-2xl border-l-4 border-[#f5c24d] bg-white p-5 shadow-sm dark:bg-slate-900">
-          <div className="text-xs font-black tracking-[0.16em] text-[#1f6b5b] uppercase">
+          <div className="text-xs font-black tracking-[0.16em] text-[#1f6b5b] uppercase dark:text-emerald-300">
             Quick answer
           </div>
           <p className="mt-2 leading-7 text-slate-700 dark:text-slate-200">{quickAnswer}</p>

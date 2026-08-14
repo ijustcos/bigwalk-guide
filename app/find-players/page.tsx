@@ -11,7 +11,7 @@ export default function FindPlayersPage() {
   return (
     <div className="pt-10 pb-12">
       <div className="max-w-3xl">
-        <span className="rounded-full bg-[#dbeadf] px-3 py-1 text-xs font-bold tracking-wider text-[#1f6b5b] uppercase">
+        <span className="rounded-full bg-[#dbeadf] px-3 py-1 text-xs font-bold tracking-wider text-[#1f6b5b] uppercase dark:bg-emerald-950 dark:text-emerald-300">
           Live LFG
         </span>
         <h1 className="mt-5 text-4xl font-black tracking-[-0.04em] sm:text-6xl">

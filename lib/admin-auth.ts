@@ -2,10 +2,22 @@ import { createHmac, timingSafeEqual } from 'crypto'
 import { cookies } from 'next/headers'
 
 const cookieName = 'bw_admin'
+function sessionSecret() {
+  const secret = process.env.ADMIN_SESSION_SECRET
+  if (!secret && process.env.NODE_ENV === 'production') {
+    throw new Error('ADMIN_SESSION_SECRET is required in production.')
+  }
+  return secret || 'local-development-only'
+}
+
 function signature() {
-  return createHmac('sha256', process.env.ADMIN_SESSION_SECRET || 'local-preview-only')
-    .update('bigwalk-admin')
-    .digest('hex')
+  return createHmac('sha256', sessionSecret()).update('bigwalk-admin').digest('hex')
+}
+
+export function validAdminPassword(candidate: string) {
+  const password = process.env.ADMIN_PASSWORD
+  if (!password || candidate.length !== password.length) return false
+  return timingSafeEqual(Buffer.from(candidate), Buffer.from(password))
 }
 
 export async function isAdmin() {
