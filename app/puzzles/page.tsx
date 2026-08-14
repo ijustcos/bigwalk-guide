@@ -2,6 +2,7 @@ import Link from '@/components/Link'
 import { allBlogs } from 'contentlayer/generated'
 import { ArrowRight, Search } from 'lucide-react'
 import { genPageMetadata } from '@/app/seo'
+import Image from 'next/image'
 
 export const metadata = genPageMetadata({
   title: 'Big Walk Puzzle Solutions',
@@ -9,13 +10,6 @@ export const metadata = genPageMetadata({
     'Identify Big Walk puzzles by screenshots, visible features, player nicknames and location. Reveal hints without spoiling the full solution.',
 })
 
-const colors = [
-  'bg-[#f5c24d] text-[#153f38]',
-  'bg-[#8763a8] text-white',
-  'bg-[#80abc4] text-[#102e3a]',
-  'bg-[#dc6d4f] text-white',
-  'bg-[#557c65] text-white',
-]
 export default function PuzzlesPage() {
   const puzzles = allBlogs.filter((post) => post.category === 'Puzzle')
   return (
@@ -39,10 +33,18 @@ export default function PuzzlesPage() {
             href={`/${post.slug}`}
             className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900"
           >
-            <div
-              className={`grid h-32 place-items-center px-6 text-center text-2xl font-black ${colors[index % colors.length]}`}
-            >
-              {post.aliases?.[0] || 'Puzzle'}
+            <div className="relative h-40 overflow-hidden bg-slate-200">
+              <Image
+                src={post.images?.[0] || `/static/images/big-walk/official-0${(index % 8) + 1}.jpg`}
+                alt={`${post.title} — Big Walk gameplay`}
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="object-cover transition duration-500 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent" />
+              <span className="absolute right-4 bottom-3 left-4 text-xs font-bold tracking-wide text-white/90 uppercase">
+                {post.aliases?.[0] || 'Puzzle'}
+              </span>
             </div>
             <div className="p-5">
               <h2 className="leading-6 font-black group-hover:text-[#1f6b5b]">{post.title}</h2>

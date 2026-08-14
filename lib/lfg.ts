@@ -1,7 +1,7 @@
 import { createHash, randomBytes } from 'crypto'
 import { z } from 'zod'
 
-export const platforms = ['PC', 'PS5', 'Xbox', 'Switch'] as const
+export const platforms = ['PC', 'PS5', 'Switch 2'] as const
 export const regions = ['Americas', 'Europe', 'Asia', 'Oceania'] as const
 
 export const lfgPostSchema = z
@@ -12,7 +12,7 @@ export const lfgPostSchema = z
     language: z.string().trim().min(2).max(30),
     groupType: z.enum(['Hosting', 'Looking to join', 'Either']),
     availability: z.enum(['Playing now', 'Today', 'Later']),
-    playersNeeded: z.coerce.number().int().min(1).max(3),
+    playersNeeded: z.coerce.number().int().min(1).max(11),
     microphone: z.enum(['Required', 'Optional', 'No mic']),
     experience: z.enum(['New', 'Some progress', 'Experienced']),
     goal: z.string().trim().min(2).max(80),

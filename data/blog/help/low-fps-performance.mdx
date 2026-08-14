@@ -1,0 +1,41 @@
+---
+title: 'Big Walk Low FPS, Stuttering and Performance Fixes'
+date: '2026-08-14'
+lastmod: '2026-08-14'
+summary: 'The official graphics-setting order for low frame rates, plus driver, background-network and connection checks for jittery players.'
+category: 'Technical Help'
+aliases: ['low FPS', 'lag', 'stuttering', 'running slowly']
+quickAnswer: 'Lower Render Scale first, then lower the Quality preset. Once performance is stable, raise Render Scale gradually. Update graphics drivers if scenery is missing; network jitter needs a connection fix, not lower graphics.'
+tags: ['performance', 'FPS', 'lag', 'graphics']
+images: ['/static/images/big-walk/official-03.jpg']
+layout: GuideLayout
+---
+
+## Improve frame rate in the right order
+
+1. Open **Settings → Graphics** and lower **Render Scale**.
+2. Lower the overall **Quality** setting to reduce CPU and GPU load.
+3. Test in the same demanding outdoor area.
+4. Raise Render Scale one step at a time until image clarity and stable performance are balanced.
+
+<GameImage
+  src="/static/images/big-walk/official-05.jpg"
+  alt="Big Walk characters outside a detailed forest structure"
+  caption="Test settings in a dense forest or large sightline rather than an empty interior."
+/>
+
+## Missing water or broken scenery
+
+Update the operating system and graphics drivers. House House specifically notes that missing world elements such as the ocean can be a graphics-driver issue.
+
+## Players move erratically but your FPS is fine
+
+That is more likely network jitter. Stop downloads and streams, move closer to the router or use Ethernet. The host should also check connection warnings in the lower-left corner. If nobody can connect, verify every device's system clock.
+
+## Audio cuts out while the game struggles
+
+Performance trouble can also interrupt audio. Stabilize graphics settings first, then retest sound before changing microphones or reinstalling the game.
+
+## Sources checked
+
+- [Official Big Walk FAQ](https://bigwalk.game/faq/) — render scale, quality, driver and network guidance

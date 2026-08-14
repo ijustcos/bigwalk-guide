@@ -2,7 +2,19 @@
 
 import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
-import { Check, Clock3, Copy, Filter, Flag, Mic, Plus, RefreshCw, Users, X } from 'lucide-react'
+import {
+  Check,
+  Clock3,
+  Copy,
+  ExternalLink,
+  Filter,
+  Flag,
+  Mic,
+  Plus,
+  RefreshCw,
+  Users,
+  X,
+} from 'lucide-react'
 import type { PublicLfgPost } from '@/lib/lfg'
 import TurnstileWidget from './TurnstileWidget'
 
@@ -42,6 +54,55 @@ const samplePosts: PublicLfgPost[] = [
     status: 'Active',
     createdAt: new Date(Date.now() - 26 * 60000).toISOString(),
     expiresAt: new Date(Date.now() + 3 * 3600000).toISOString(),
+  },
+]
+
+const communityLeads = [
+  {
+    title: 'English group at Yellow Tower',
+    detail:
+      'An active 4+ world was looking for more voice-chat players while progressing Yellow Tower.',
+    tags: ['4+ world', 'Yellow Tower', 'English voice'],
+    source:
+      'https://www.reddit.com/r/BigWalk/comments/1vn1bdo/looking_for_group_megathread_13_august_2026/',
+  },
+  {
+    title: 'Fresh North America group',
+    detail: 'A host was starting a new 4+ world for respectful English-speaking adult players.',
+    tags: ['North America', 'Fresh save', '18+'],
+    source:
+      'https://www.reddit.com/r/BigWalk/comments/1vn1bdo/looking_for_group_megathread_13_august_2026/',
+  },
+  {
+    title: 'Fourth player for Blue Tower',
+    detail:
+      'A small late-night group needed one more person for puzzles beginning around Blue Tower.',
+    tags: ['One needed', 'Blue Tower', 'Late night'],
+    source:
+      'https://www.reddit.com/r/BigWalk/comments/1vn1bdo/looking_for_group_megathread_13_august_2026/',
+  },
+  {
+    title: 'Second-playthrough puzzle group',
+    detail: 'An experienced host started again at Red Tower and welcomed relaxed adult puzzlers.',
+    tags: ['Red Tower', 'Second run', '18+'],
+    source:
+      'https://www.reddit.com/r/BigWalk/comments/1vn1bdo/looking_for_group_megathread_13_august_2026/',
+  },
+  {
+    title: 'New player looking for a 4+ group',
+    detail:
+      'A first-time adult player wanted a larger group after discovering the game through a video.',
+    tags: ['New player', '4+ world', '18+'],
+    source:
+      'https://www.reddit.com/r/BigWalk/comments/1vn1bdo/looking_for_group_megathread_13_august_2026/',
+  },
+  {
+    title: 'Replay for missed puzzles',
+    detail:
+      'A returning player wanted to revisit the island and complete puzzles they missed the first time.',
+    tags: ['Replay', 'Missed puzzles', 'Completion'],
+    source:
+      'https://www.reddit.com/r/BigWalk/comments/1vn1bdo/looking_for_group_megathread_13_august_2026/',
   },
 ]
 
@@ -142,7 +203,7 @@ export default function FindPlayersBoard() {
       )}
       <div className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:flex-row md:items-end dark:border-slate-800 dark:bg-slate-900">
         {[
-          ['Platform', platform, setPlatform, ['Any', 'PC', 'PS5', 'Xbox', 'Switch']],
+          ['Platform', platform, setPlatform, ['Any', 'PC', 'PS5', 'Switch 2']],
           ['Region', region, setRegion, ['Any', 'Americas', 'Europe', 'Asia', 'Oceania']],
           ['Microphone', mic, setMic, ['Any', 'Required', 'Optional', 'No mic']],
         ].map(([label, value, setter, options]) => (
@@ -170,6 +231,50 @@ export default function FindPlayersBoard() {
           <Plus size={18} /> Post a group
         </button>
       </div>
+
+      <section className="mt-8">
+        <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
+          <div>
+            <p className="text-xs font-bold tracking-[0.16em] text-[#1f6b5b] uppercase">
+              Fresh community leads
+            </p>
+            <h2 className="mt-1 text-2xl font-black">Recent public LFG examples</h2>
+          </div>
+          <p className="max-w-md text-xs leading-5 text-slate-500 sm:text-right">
+            Curated from the August 13 community thread and paraphrased for privacy. Open the source
+            to find current replies; we do not copy usernames, private details or expiring codes.
+          </p>
+        </div>
+        <div className="mt-4 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+          {communityLeads.map((lead) => (
+            <a
+              key={lead.title}
+              href={lead.source}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group rounded-2xl border border-emerald-900/10 bg-[#e4efe5] p-4 transition hover:-translate-y-0.5 hover:shadow-md dark:bg-emerald-950/40"
+            >
+              <h3 className="font-black group-hover:text-[#1f6b5b]">{lead.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
+                {lead.detail}
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {lead.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full bg-white/80 px-2 py-1 text-[10px] font-bold text-slate-600 dark:bg-slate-900/80 dark:text-slate-300"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+              <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#1f6b5b]">
+                View original request <ExternalLink size={13} />
+              </span>
+            </a>
+          ))}
+        </div>
+      </section>
 
       <div className="mt-6 flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm font-semibold text-slate-500">
@@ -316,7 +421,7 @@ export default function FindPlayersBoard() {
               <label className="text-sm font-bold">
                 Platform
                 <select name="platform" className={fieldClass}>
-                  {['PC', 'PS5', 'Xbox', 'Switch'].map((v) => (
+                  {['PC', 'PS5', 'Switch 2'].map((v) => (
                     <option key={v}>{v}</option>
                   ))}
                 </select>
@@ -352,7 +457,7 @@ export default function FindPlayersBoard() {
               <label className="text-sm font-bold">
                 Players needed
                 <select name="playersNeeded" className={fieldClass}>
-                  {[1, 2, 3].map((v) => (
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((v) => (
                     <option key={v}>{v}</option>
                   ))}
                 </select>

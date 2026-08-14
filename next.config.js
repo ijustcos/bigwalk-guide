@@ -13,7 +13,7 @@ const ContentSecurityPolicy = `
   media-src *.s3.amazonaws.com;
   connect-src *;
   font-src 'self';
-  frame-src challenges.cloudflare.com;
+  frame-src challenges.cloudflare.com https://www.youtube-nocookie.com https://www.youtube.com;
 `
 
 const securityHeaders = [

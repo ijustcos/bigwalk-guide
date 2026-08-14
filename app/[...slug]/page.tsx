@@ -7,6 +7,7 @@ import type { Blog } from 'contentlayer/generated'
 import GuideLayout from '@/layouts/GuideLayout'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import siteMetadata from '@/data/siteMetadata'
 
 export async function generateMetadata({
   params,
@@ -17,7 +18,28 @@ export async function generateMetadata({
   const value = decodeURI(slug.join('/'))
   const post = allBlogs.find((item) => item.slug === value)
   if (!post) return
-  return { title: post.title, description: post.summary, alternates: { canonical: `/${value}` } }
+  const canonical = `${siteMetadata.siteUrl}/${value}/`
+  const image = post.images?.[0] || siteMetadata.socialBanner
+  return {
+    title: post.title,
+    description: post.summary,
+    alternates: { canonical },
+    openGraph: {
+      type: 'article',
+      title: post.title,
+      description: post.summary,
+      url: canonical,
+      images: [image],
+      publishedTime: post.date,
+      modifiedTime: post.lastmod || post.date,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.summary,
+      images: [image],
+    },
+  }
 }
 
 export const generateStaticParams = async () =>

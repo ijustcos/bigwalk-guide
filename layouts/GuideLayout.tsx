@@ -3,6 +3,8 @@ import { CoreContent } from 'pliny/utils/contentlayer'
 import type { Blog } from 'contentlayer/generated'
 import Link from '@/components/Link'
 import { CheckCircle2, Clock3, MapPin, Users } from 'lucide-react'
+import GameImage from '@/components/GameImage'
+import { getCategorySlug } from '@/data/guideCategories'
 
 export default function GuideLayout({
   content,
@@ -25,7 +27,9 @@ export default function GuideLayout({
     lastmod,
     date,
     verified,
+    images,
   } = content
+  const categorySlug = getCategorySlug(category)
   return (
     <article className="mx-auto max-w-4xl pt-9 pb-12">
       <nav
@@ -34,7 +38,17 @@ export default function GuideLayout({
       >
         <Link href="/">Home</Link>
         <span>/</span>
-        <Link href={category === 'Puzzle' ? '/puzzles' : '/'}>{category}</Link>
+        <Link
+          href={
+            category === 'Puzzle'
+              ? '/puzzles'
+              : categorySlug
+                ? `/topics/${categorySlug}`
+                : '/guides'
+          }
+        >
+          {category}
+        </Link>
       </nav>
       <header>
         <div className="flex flex-wrap items-center gap-2">
@@ -43,7 +57,7 @@ export default function GuideLayout({
           </span>
           {verified && (
             <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500">
-              <CheckCircle2 size={14} /> Community verified
+              <CheckCircle2 size={14} /> Source checked
             </span>
           )}
         </div>
@@ -82,6 +96,14 @@ export default function GuideLayout({
           </div>
         )}
       </header>
+      {images?.[0] && (
+        <GameImage
+          src={images[0]}
+          alt={`${title} — official Big Walk game screenshot`}
+          caption="Big Walk's open world is built around exploration, communication and shared discoveries."
+          priority
+        />
+      )}
       {quickAnswer && (
         <aside className="my-8 rounded-2xl border-l-4 border-[#f5c24d] bg-white p-5 shadow-sm dark:bg-slate-900">
           <div className="text-xs font-black tracking-[0.16em] text-[#1f6b5b] uppercase">

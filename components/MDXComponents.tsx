@@ -6,6 +6,8 @@ import Image from './Image'
 import CustomLink from './Link'
 import TableWrapper from './TableWrapper'
 import Spoiler from './Spoiler'
+import GameImage from './GameImage'
+import VideoEmbed from './VideoEmbed'
 
 export const components: MDXComponents = {
   Image,
@@ -15,4 +17,6 @@ export const components: MDXComponents = {
   table: TableWrapper,
   BlogNewsletterForm,
   Spoiler,
+  GameImage,
+  VideoEmbed,
 }
